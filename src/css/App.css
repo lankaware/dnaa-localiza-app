@@ -1,0 +1,127 @@
+.app-content {
+    display: flex;
+    /* height: 92.5vh; */
+}
+
+.button-link a:hover {
+    /* verified */
+    color: #ffffff;
+}
+
+.container-div {
+    Display: flex;
+    Height: 70vh;
+    Width: 70vw;
+    Align-Items: center;
+    Justify-Content: center;
+    /* background-color: #fff; */
+}
+
+.container-cards {
+    Display: flex;
+    Height: 70vh;
+    Width: 70vw;
+    /* Align-Items: center; */
+    margin: 15px;
+    /* Justify-Content: center; */
+    /* background-color: #fff; */
+}
+
+.content {
+    display: flex;
+    flex: 1;
+    background-color: #ececec;
+    padding: 55px 10px 10px;
+    min-height: 100vh;
+}
+
+.data-form {
+    background-color: white;
+    padding: 15px;
+    border: rgb(172, 164, 164);
+    border-style: solid;
+    border-width: 1px;
+    width: 75vw;
+}
+
+.data-form-level1 {
+    background-color: white;
+    padding: 5px;
+    border: rgb(172, 164, 164);
+    border-style: solid;
+    border-width: 1px;
+    width: 75vw;
+}
+
+.data-form-level2 {
+    background-color: white;
+    padding: 5px;
+    /* border: rgb(172, 164, 164); */
+    border-style: none;
+    /* border-width: 1px; */
+    width: 70vw;
+}
+
+.data-table {
+    border: rgb(172, 164, 164);
+    border-style: solid;
+    border-width: 1px;
+    width: 75vw;
+    margin-top: 5px;
+}
+
+.data-table-level1 {
+    border: rgb(172, 164, 164);
+    border-style: solid;
+    border-width: 1px;
+    width: 75vw;
+    margin-top: 5px;
+}
+
+.menu {
+    /* verified */
+    padding: 50px 0px 0px 0px;
+    min-height: 100vh;
+    /* background: '../../../public/BackgroundImageMenu.jpg'; 
+    color: #ffffff;
+    background-color: #9e4903;
+    width: 30vh; 
+    */
+}
+
+.tool-bar {
+    /* verified */
+    display: flex;
+    /* width: 75vw;
+    height: 10vh; */
+}
+
+.tool-bar-filters {
+    /* verified */
+    display: flex;
+    border: #a0a0a0;
+    border-style: solid;
+    border-width: 1px;
+    width: 75vw;
+    min-height: 60px;
+    background-color: #e0f0f5;
+    /* background-color: #b1e2f1; */
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+.tool-title {
+    /* verified */
+    margin-top: 5px;
+    padding: 5px 15px 5px 0px;
+    width: 30vw;
+    /* visibility: hidden; */
+}
+
+.tool-title-sub {
+    /* verified */
+    margin-top: 5px;
+    padding: 5px 5px 0px 5px;
+    width: 30vw;
+    /* visibility: hidden; */
+}
