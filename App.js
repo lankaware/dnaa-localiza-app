@@ -3,15 +3,15 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { ErrorBoundary } from "react-error-boundary"
 
 import 'fontsource-roboto';
-import './css/bootstrap.min.css';
-import './css/App.css';
-import AppRouters from './components/layout/AppRouters.jsx'
-import AppMenu from './components/layout/AppMenu.jsx'
+import './bootstrap.css';
+import './App.css';
+import AppRouters from '../src/components/layout/AppRouters'
+import AppMenu from '../src/components/layout/AppMenu'
 import Authentic from './components/layout/Authentication.jsx'
 
 import { Context } from './context/AuthContext.jsx'
 
-import './services/customtheme'
+import './services/customTheme'
 
 function App() {
 

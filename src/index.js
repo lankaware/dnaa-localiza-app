@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import '../src/css/index.css'
 import '../src/css/bootstrap.min.css'
 import { ThemeProvider } from '@mui/material'
-import { theme } from './services/customtheme'
+import { theme } from './services/customtheme.js'
 
 import { AuthProvider } from './context/AuthContext.jsx'
 import App from './App.jsx'

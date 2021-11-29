@@ -11,24 +11,23 @@ import { useStyles } from '../../services/stylemui'
 import { getList, putRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
 
-const objectRef = 'quiz/'
+const objectRef = 'location/'
 
-const Quizzes = props => {
+const CustomerList = props => {
 
     const columns = [
         {
-            name: 'Nome do Questionário',
+            name: 'Nome do Local',
             selector: row => row.name,
             sortable: true,
             width: '30vw',
-            cell: row => (<Link to={"/quiz/" + row._id}>{row.name}</Link>)
+            cell: row => (<Link to={"/location/" + row._id}>{row.name}</Link>)
         },
         {
-            name: 'Ativo',
-            selector: row => row.active,
+            name: 'Endereço',
+            selector: row => row.address,
             sortable: true,
-            width: '10vw',
-            format: row => (row.active ? 'Sim' : 'Não')
+            width: '20vw',
         },
     ];
 
@@ -39,6 +38,7 @@ const Quizzes = props => {
     useEffect(() => {
         getList(objectRef)
             .then(items => {
+                console.log('items.record',items.record)
                 setList(items.record)
             })
     }, [])
@@ -64,13 +64,13 @@ const Quizzes = props => {
         <div>
             <div className='tool-bar'>
                 <div >
-                    <Typography variant='h6' className='tool-title' noWrap={true}>Lista de Questionários</Typography>
+                    <Typography variant='h6' className='tool-title' noWrap={true}>Lista de Locais</Typography>
                 </div>
 
                 <div className={classes.toolButtons + ' button-link'}>
                     <Box m={1}>
                         <Button color="primary" size='small' variant='contained' startIcon={<OpenInNewIcon />}
-                            href="/quiz/0">INCLUIR
+                            href="/location/0">INCLUIR
                         </Button>
                     </Box>
                     <Box m={1}>
@@ -90,7 +90,7 @@ const Quizzes = props => {
                         value={nameFilter}
                         onChange={(event) => { nameFilterSet(event.target.value.toUpperCase()) }}
                         id='nameFilter'
-                        label='Nome do Ferramenta'
+                        label='Nome do Cliente'
                         fullWidth={false}
                         InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                         onKeyPress={(e) => { launchSearch(e) }}
@@ -123,4 +123,4 @@ const Quizzes = props => {
     )
 }
 
-export default Quizzes
+export default CustomerList

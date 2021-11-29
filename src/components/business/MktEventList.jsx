@@ -11,17 +11,17 @@ import { useStyles } from '../../services/stylemui'
 import { getList, putRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
 
-const objectRef = 'customer/'
+const objectRef = 'mktevent/'
 
 const CustomerList = props => {
 
     const columns = [
         {
-            name: 'Nome da Cliente',
+            name: 'Nome da Evento',
             selector: row => row.name,
             sortable: true,
             width: '30vw',
-            cell: row => (<Link to={"/customer/" + row._id}>{row.name}</Link>)
+            cell: row => (<Link to={"/mktevent/" + row._id}>{row.name}</Link>)
         },
         {
             name: 'Ativo',
@@ -64,13 +64,13 @@ const CustomerList = props => {
         <div>
             <div className='tool-bar'>
                 <div >
-                    <Typography variant='h6' className='tool-title' noWrap={true}>Lista de Clientes</Typography>
+                    <Typography variant='h6' className='tool-title' noWrap={true}>Lista de Eventos</Typography>
                 </div>
 
                 <div className={classes.toolButtons + ' button-link'}>
                     <Box m={1}>
                         <Button color="primary" size='small' variant='contained' startIcon={<OpenInNewIcon />}
-                            href="/customer/0">INCLUIR
+                            href="/mktevent/0">INCLUIR
                         </Button>
                     </Box>
                     <Box m={1}>

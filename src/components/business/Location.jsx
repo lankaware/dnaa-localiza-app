@@ -18,44 +18,27 @@ import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
 import TabPanel, { posTab } from '../commons/TabPanel'
 import { theme } from '../../services/customtheme'
 
-import RespondentList from './RespondentList'
 import { timeBr } from '../../services/dateutils';
 
-const objectRef = 'customer/'
-const objectId = 'customerid/'
+const objectRef = 'location/'
+const objectId = 'locationid/'
 
-const Customer = props => {
+const MktEvent = props => {
 
     let { id } = useParams()
 
     const [_id, _idSet] = useState(id)
     const [name, nameSet] = useState('')
-    const [cpf, cpfSet] = useState('')
-    const [cnpj, cnpjSet] = useState('')
-    const [legalName, legalNameSet] = useState('')
-    const [email, emailSet] = useState('')
-    const [phone, phoneSet] = useState('')
-    const [personType, personTypeSet] = useState('')
+    const [profile, profileSet] = useState('')
     const [address, addressSet] = useState('')
     const [city, citySet] = useState('')
     const [state, stateSet] = useState('')
     const [zip, zipSet] = useState('')
-    const [active, activeSet] = useState(false)
-    const [registerDate, registerDateSet] = useState('')
-
-    const [nameTemp, nameSetTemp] = useState('')
-    const [cpfTemp, cpfSetTemp] = useState('')
-    const [cnpjTemp, cnpjSetTemp] = useState('')
-    const [legalNameTemp, legalNameSetTemp] = useState('')
-    const [emailTemp, emailSetTemp] = useState('')
-    const [phoneTemp, phoneSetTemp] = useState('')
-    const [personTypeTemp, personTypeSetTemp] = useState('')
-    const [addressTemp, addressSetTemp] = useState('')
-    const [cityTemp, citySetTemp] = useState('')
-    const [stateTemp, stateSetTemp] = useState('')
-    const [zipTemp, zipSetTemp] = useState('')
-    const [activeTemp, activeSetTemp] = useState(false)
-    const [registerDateTemp, registerDateSetTemp] = useState('')
+    const [email, emailSet] = useState('')
+    const [phone, phoneSet] = useState('')
+    const [contactPreference, contactPreferenceSet] = useState('')
+    const [photo, photoSet] = useState('')
+    const [disponibility, disponibilitySet] = useState('')
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -63,6 +46,7 @@ const Customer = props => {
     const [deleteDialog, setDeleteDialog] = useState(false)
     const [deleteInfoDialog, setDeleteInfoDialog] = useState(false)
     const [emptyRecDialog, setEmptyRecDialog] = useState(false)
+    const [recUpdated, setRecUpdated] = useState(true)
 
     const [tabValue, setTabValue] = useState(0);
 
@@ -73,37 +57,21 @@ const Customer = props => {
             getList(objectId + id)
                 .then(items => {
                     // _idSet(items)
-
                     nameSet(items.record.name || '')
-                    cpfSet(items.record.cpf || '')
-                    cnpjSet(items.record.cnpj || '')
-                    legalNameSet(items.record.legalName || '')
-                    emailSet(items.record.email || '')
-                    phoneSet(items.record.phone || '')
-                    personTypeSet(items.record.personType || '')
+                    profileSet(items.record.profile || '')
                     addressSet(items.record.address || '')
                     citySet(items.record.city || '')
                     stateSet(items.record.state || '')
                     zipSet(items.record.zip || '')
-                    activeSet(items.record.active || '')
-                    registerDateSet((items.record.registerDate || '').substr(0, 10))
-
-                    nameSetTemp(items.record.name || '')
-                    cpfSetTemp(items.record.cpf || '')
-                    cnpjSetTemp(items.record.cnpj || '')
-                    legalNameSetTemp(items.record.legalName || '')
-                    emailSetTemp(items.record.email || '')
-                    phoneSetTemp(items.record.phone || '')
-                    personTypeSetTemp(items.record.personType || '')
-                    addressSetTemp(items.record.address || '')
-                    citySetTemp(items.record.city || '')
-                    stateSetTemp(items.record.state || '')
-                    zipSetTemp(items.record.zip || '')
-                    activeSetTemp(items.record.active || '')
-                    registerDateSetTemp((items.record.registerDate || '').substr(0, 10))
+                    emailSet(items.record.email || '')
+                    phoneSet(items.record.phone || '')
+                    contactPreferenceSet(items.record.contactPreference || '')
+                    photoSet(items.record.photo || '')
+                    disponibilitySet(items.record.disponibility || '')
                 })
         }
-    }, [id])
+        setRecUpdated(true)
+    }, [id, recUpdated])
 
     const saveRec = () => {
         if (!name) {
@@ -112,18 +80,16 @@ const Customer = props => {
         }
         let recObj = {
             name,
-            cpf,
-            cnpj,
-            legalName,
-            email,
-            phone,
-            personType,
+            profile,
             address,
             city,
             state,
             zip,
-            active,
-            registerDate
+            email,
+            phone,
+            contactPreference,
+            photo,
+            disponibility,
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
@@ -135,20 +101,6 @@ const Customer = props => {
                     _idSet(result.record._id)
                 })
         }
-        nameSetTemp(name)
-        cpfSetTemp(cpf)
-        cnpjSetTemp(cnpj)
-        legalNameSetTemp(legalName)
-        emailSetTemp(email)
-        phoneSetTemp(phone)
-        personTypeSetTemp(personType)
-        addressSetTemp(address)
-        citySetTemp(city)
-        stateSetTemp(state)
-        zipSetTemp(zip)
-        activeSetTemp(active)
-        registerDateSetTemp(registerDate)
-
         setEditMode(false)
         setInsertMode(false)
     }
@@ -157,20 +109,7 @@ const Customer = props => {
         if (insertMode) {
             document.getElementById("backButton").click();
         }
-        nameSet(nameTemp)
-        cpfSet(cpfTemp)
-        cnpjSet(cnpjTemp)
-        legalNameSet(legalNameTemp)
-        emailSet(emailTemp)
-        phoneSet(phoneTemp)
-        personTypeSet(personTypeTemp)
-        addressSet(addressTemp)
-        citySet(cityTemp)
-        stateSet(stateTemp)
-        zipSet(zipTemp)
-        activeSet(activeTemp)
-        registerDateSet(registerDateTemp)
-
+        setRecUpdated(false)
         setEditMode(false)
     }
 
@@ -200,7 +139,7 @@ const Customer = props => {
         <div>
             <div className='tool-bar'>
                 <div >
-                    <Typography variant='h5' className='tool-title' noWrap={true}>Registro de Cliente</Typography>
+                    <Typography variant='h5' className='tool-title' noWrap={true}>Registro de Local</Typography>
                 </div>
                 <div className={classes.toolButtons + ' button-link'}>
                     <Button color='primary' variant='contained' size='small' startIcon={<EditIcon />}
@@ -216,18 +155,18 @@ const Customer = props => {
                         onClick={_ => delRec()} disabled={editMode}>APAGAR
                     </Button>
                     <Button color='primary' variant='contained' size='small' startIcon={<KeyboardReturnIcon />}
-                        href="/customerList" id='backButton' disabled={editMode}>VOLTAR
+                        href="/locationList" id='backButton' disabled={editMode}>VOLTAR
                     </Button>
                 </div>
             </div>
             <div className='data-form'>
                 <Grid container spacing={2} >
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                         <TextField
                             value={name}
                             onChange={(event) => { nameSet(event.target.value.toUpperCase()) }}
                             id='name'
-                            label='Nome do Cliente'
+                            label='Nome do Local'
                             fullWidth={true}
                             disabled={!insertMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
@@ -237,10 +176,10 @@ const Customer = props => {
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            id='personType'
-                            label='Tipo Pessoa'
-                            value={personType}
-                            onChange={(event) => { personTypeSet(event.target.value) }}
+                            id='profile'
+                            label='Perfil do Local'
+                            value={profile}
+                            onChange={(event) => { profileSet(event.target.value) }}
                             size='small'
                             fullWidth={true}
                             disabled={!editMode}
@@ -248,99 +187,14 @@ const Customer = props => {
                             variant='outlined'
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             select >
-                            <MenuItem key={0} value={'F'}>{'Física'}</MenuItem>
-                            <MenuItem key={1} value={'J'}>{'Jurídica'}</MenuItem>
+                            <MenuItem key={0} value={'1'}>{'$'}</MenuItem>
+                            <MenuItem key={1} value={'2'}>{'$$'}</MenuItem>
+                            <MenuItem key={2} value={'3'}>{'$$$'}</MenuItem>
+                            <MenuItem key={3} value={'4'}>{'$$$$'}</MenuItem>
+                            <MenuItem key={4} value={'5'}>{'$$$$$$'}</MenuItem>
                         </TextField>
                     </Grid>
-                    {function () {
-                        if (personType === 'F')
-                            return (
-                                <Grid item xs={3}>
-                                    <TextField
-                                        value={cpf}
-                                        onChange={(event) => { cpfSet(event.target.value) }}
-                                        id='cpf'
-                                        label='CPF'
-                                        fullWidth={false}
-                                        disabled={!editMode}
-                                        InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                                        variant='outlined'
-                                        size='small'
-                                    />
-                                </Grid>
-                            )
-                    }()}
-                    {function () {
-                        if (personType === 'J')
-                            return (
-                                <Grid item xs={3}>
-                                    <TextField
-                                        value={cnpj}
-                                        onChange={(event) => { cnpjSet(event.target.value) }}
-                                        id='cnpj'
-                                        label='CNPJ'
-                                        fullWidth={false}
-                                        disabled={!editMode}
-                                        InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                                        variant='outlined'
-                                        size='small'
-                                    />
-                                </Grid>
-                            )
-                    }()}
-                    {function () {
-                        if (personType === 'J')
-                            return (
-                                <Grid item xs={4}>
-                                    <TextField
-                                        value={legalName}
-                                        onChange={(event) => { legalNameSet(event.target.value) }}
-                                        id='legalName'
-                                        label='Razão Social'
-                                        fullWidth={true}
-                                        disabled={!editMode}
-                                        InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                                        variant='outlined'
-                                        size='small'
-                                    // inputProps={{ type: 'number' }}
-                                    />
-                                </Grid>
-                            )
-                        else
-                            return (
-                                <Grid item xs={3}>
-                                </Grid>
-                            )
-                    }()}
 
-                    <Grid item xs={3}>
-                        <TextField
-                            value={email}
-                            onChange={(event) => { emailSet(event.target.value) }}
-                            id='email'
-                            label='Email'
-                            fullWidth={true}
-                            disabled={!editMode}
-                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                            variant='outlined'
-                            size='small'
-                        // inputProps={{ type: 'number' }}
-                        />
-                    </Grid>
-                    <Grid item xs={2}>
-                        <TextField
-                            value={phone}
-                            onChange={(event) => { phoneSet(event.target.value) }}
-                            id='phone'
-                            label='Fone'
-                            fullWidth={false}
-                            disabled={!editMode}
-                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                            variant='outlined'
-                            size='small'
-                        // inputProps={{ type: 'number' }}
-                        />
-                    </Grid>
                     <Grid item xs={4}>
                         <TextField
                             value={address}
@@ -397,29 +251,65 @@ const Customer = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={4}>
                         <TextField
-                            value={registerDate}
-                            onChange={(event) => { registerDateSet(event.target.value) }}
-                            id='registerDate'
-                            label='Data de Registro'
+                            value={email}
+                            onChange={(event) => { emailSet(event.target.value) }}
+                            id='email'
+                            label='Email'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
-                            inputProps={{ type: 'date' }}
+                        // inputProps={{ type: 'number' }}
                         />
                     </Grid>
                     <Grid item xs={3}>
-                        <FormControlLabel
-                            label="Ativo?"
-                            control={
-                                <Checkbox
-                                    checked={active}
-                                    onChange={(event) => { activeSet(event.target.checked) }}
-                                />
-                            }
+                        <TextField
+                            value={phone}
+                            onChange={(event) => { phoneSet(event.target.value) }}
+                            id='phone'
+                            label='Fone'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <TextField
+                            id='contactPreference'
+                            label='Contato Preferencial'
+                            value={contactPreference}
+                            onChange={(event) => { contactPreferenceSet(event.target.value) }}
+                            size='small'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            type='text'
+                            variant='outlined'
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            select>
+                            <MenuItem key={0} value={'whatsapp'}>{'whatsapp'}</MenuItem>
+                            <MenuItem key={1} value={'email'}>{'email'}</MenuItem>
+                            <MenuItem key={1} value={'telefone'}>{'telefone'}</MenuItem>
+                            <MenuItem key={1} value={'pessoalmente'}>{'pessoalmente'}</MenuItem>
+                        </TextField>       
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
+                            value={disponibility}
+                            onChange={(event) => { disponibilitySet(event.target.value) }}
+                            id='disponibility'
+                            label='Disponibilidade'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
                         />
                     </Grid>
                 </Grid>
@@ -436,15 +326,10 @@ const Customer = props => {
                             variant="fullWidth"
                             aria-label="full width tabs example"
                         >
-                            <Tab label="Respondentes" {...posTab(0)} />
+                            <Tab label="Locais" {...posTab(0)} />
                         </Tabs>
                     </AppBar>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
-                        <RespondentList
-                            customerId={_id}
-                            editMode={editMode}
-                        // onChangeSublist={availabilityListSet}
-                        />
                     </TabPanel>
                 </div>
 
@@ -508,4 +393,4 @@ const Customer = props => {
     )
 }
 
-export default Customer
+export default MktEvent

@@ -3,51 +3,42 @@ import { useParams } from 'react-router-dom'
 import { Form } from 'reactstrap';
 import {
     Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent,
-    DialogContentText, DialogTitle, AppBar, Tabs, Tab, MenuItem, Checkbox, FormControlLabel
+    DialogContentText, DialogTitle, Checkbox, FormControlLabel,
+    AppBar, Tabs, Tab, MenuItem
 } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add';
 
 import EditIcon from '@mui/icons-material/Edit'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import CancelIcon from '@mui/icons-material/Cancel'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn'
-import LinkIcon from '@mui/icons-material/Link'
 
 import { useStyles } from '../../services/stylemui'
 import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
 import TabPanel, { posTab } from '../commons/TabPanel'
 import { theme } from '../../services/customtheme'
 
-import QuizCard from './QuizCard'
+import EventLocationList from './EventLocationList'
+import { timeBr } from '../../services/dateutils';
 
-const objectRef = 'quiz/'
-const objectId = 'quizid/'
+const objectRef = 'mktevent/'
+const objectId = 'mkteventid/'
 
-const Quiz = props => {
+const MktEvent = props => {
 
     let { id } = useParams()
 
     const [_id, _idSet] = useState(id)
     const [name, nameSet] = useState('')
-    const [active, activeSet] = useState(false)
-    const [blockLimit, blockLimitSet] = useState('')
-    const [questionLimit, questionLimitSet] = useState('')
-    const [toolId, toolIdSet] = useState('')
-    const [toolName, toolNameSet] = useState('')
-
-    const [nameTemp, nameSetTemp] = useState('')
-    const [activeTemp, activeSetTemp] = useState(false)
-    const [blockLimitTemp, blockLimitSetTemp] = useState('')
-    const [questionLimitTemp, questionLimitSetTemp] = useState('')
-    const [toolIdTemp, toolIdSetTemp] = useState('')
-    const [toolNameTemp, toolNameSetTemp] = useState('')
-
-    const [toolList, toolListSet] = useState([])
-    const [dimensionList, dimensionListSet] = useState([])
-
-    const [cardBlock, cardBlockSet] = useState([])
-    const [nOfCards, nOfCardsSet] = useState(0)
+    const [initialDate, initialDateSet] = useState('')
+    const [finalDate, finalDateSet] = useState('')
+    const [profile, profileSet] = useState('')
+    const [address, addressSet] = useState('')
+    const [city, citySet] = useState('')
+    const [state, stateSet] = useState('')
+    const [zip, zipSet] = useState('')
+    const [email, emailSet] = useState('')
+    const [phone, phoneSet] = useState('')
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -55,69 +46,30 @@ const Quiz = props => {
     const [deleteDialog, setDeleteDialog] = useState(false)
     const [deleteInfoDialog, setDeleteInfoDialog] = useState(false)
     const [emptyRecDialog, setEmptyRecDialog] = useState(false)
+    const [recUpdated, setRecUpdated] = useState(true)
 
     const [tabValue, setTabValue] = useState(0);
 
-    // const [refresh, refreshSet] = useState(true)
-
     const classes = useStyles()
-
-    const emptyCard = () => {
-        const nextNumber = cardBlock ? cardBlock.length + 1 : 1
-        return {
-            number: nextNumber,
-            observation: '',
-            questions: emptyCardList()
-        }
-    }
-
-    const emptyCardList = () => {
-        return dimensionList.map(item => {
-            return {
-                dimension: item.acronym,
-                text: '',
-            }
-        })
-    }
 
     useEffect(() => {
         if (id !== '0') {
             getList(objectId + id)
                 .then(items => {
-                    nameSet(items.record[0].name || '')
-                    activeSet(items.record[0].active || false)
-                    blockLimitSet(items.record[0].blockLimit || '')
-                    questionLimitSet(items.record[0].questionLimit || '')
-                    toolIdSet(items.record[0].tool_id || '')
-                    toolNameSet(items.record[0].tool_name || '')
-
-                    nameSetTemp(items.record[0].name || '')
-                    activeSetTemp(items.record[0].active || false)
-                    blockLimitSetTemp(items.record[0].blockLimit || '')
-                    questionLimitSetTemp(items.record[0].questionLimit || '')
-                    toolIdSetTemp(items.record[0].tool_id || '')
-                    toolNameSetTemp(items.record[0].tool_name || '')
-
-                    cardBlockSet(items.record[0].blocks)
-
-                    if (items.record[0].blocks) {
-                        nOfCardsSet(items.record[0].blocks.length)
-                    } else {
-                        nOfCardsSet(0)
-                    }
+                    nameSet(items.record.name || '')
+                    initialDateSet((items.record.initialDate || '').substr(0, 10))
+                    finalDateSet((items.record.finalDate || '').substr(0, 10))
+                    profileSet(items.record.profile || '')
+                    addressSet(items.record.address || '')
+                    citySet(items.record.city || '')
+                    stateSet(items.record.state || '')
+                    zipSet(items.record.zip || '')
+                    emailSet(items.record.email || '')
+                    phoneSet(items.record.phone || '')
                 })
         }
-        getList('tool/')
-            .then(items => {
-                toolListSet(items.record)
-            })
-        if (toolId) {
-            getList('dimensiontool/' + toolId)
-                .then(items => {
-                    dimensionListSet(items.record)
-                })
-        }
-    }, [id, toolId])
+        setRecUpdated(true)
+    }, [id, recUpdated])
 
     const saveRec = () => {
         if (!name) {
@@ -126,11 +78,15 @@ const Quiz = props => {
         }
         let recObj = {
             name,
-            active,
-            blockLimit,
-            questionLimit,
-            tool_id: toolId,
-            blocks: cardBlock,
+            initialDate,
+            finalDate,
+            profile,
+            address,
+            city,
+            state,
+            zip,
+            email,
+            phone,
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
@@ -142,12 +98,6 @@ const Quiz = props => {
                     _idSet(result.record._id)
                 })
         }
-        nameSetTemp(name)
-        activeSetTemp(active)
-        blockLimitSetTemp(blockLimit)
-        questionLimitSetTemp(questionLimit)
-        toolIdSetTemp(toolId)
-        toolNameSetTemp(toolName)
         setEditMode(false)
         setInsertMode(false)
     }
@@ -156,55 +106,8 @@ const Quiz = props => {
         if (insertMode) {
             document.getElementById("backButton").click();
         }
-        nameSet(nameTemp)
-        activeSet(activeTemp)
-        blockLimitSet(blockLimitTemp)
-        questionLimitSet(questionLimitTemp)
-        toolIdSet(toolIdTemp)
-        toolNameSet(toolNameTemp)
+        setRecUpdated(false)
         setEditMode(false)
-    }
-
-    const cardMount = () => {
-        if (!cardBlock) return null
-        return cardBlock.map((item, index) => (
-            <Grid item md={6} key={index}>
-                <QuizCard
-                    card={item}   // {cardBlock[index]}
-                    changeCard={cardSet}
-                    cardNumber={index}
-                    editMode={editMode}
-                />
-                <Button color='primary' size='large' id='searchButton' startIcon={<DeleteForeverIcon />}
-                    onClick={_ => cardDrop(index)} >
-                </Button>
-            </Grid>
-        ))
-    }
-
-    const addCard = () => {
-        const newCard = emptyCard()
-        if (cardBlock) {
-            cardBlockSet([...cardBlock, newCard])
-        } else {
-            cardBlockSet([newCard])
-        }
-        nOfCardsSet(nOfCards + 1)
-    }
-
-    const cardSet = (cardNumber, card) => {
-        cardBlock[cardNumber] = card
-    }
-
-    const cardDrop = (cardNumber) => {
-
-        let blockTemp = cardBlock
-        blockTemp.splice(cardNumber, 1)
-        cardBlockSet(blockTemp)
-
-        nOfCardsSet(nOfCards - 1)
-        setEditMode(true)
-
     }
 
     const delRec = () => {
@@ -233,7 +136,7 @@ const Quiz = props => {
         <div>
             <div className='tool-bar'>
                 <div >
-                    <Typography variant='h5' className='tool-title' noWrap={true}>Gerenciamento de Questionário</Typography>
+                    <Typography variant='h5' className='tool-title' noWrap={true}>Registro de Evento</Typography>
                 </div>
                 <div className={classes.toolButtons + ' button-link'}>
                     <Button color='primary' variant='contained' size='small' startIcon={<EditIcon />}
@@ -246,112 +149,166 @@ const Quiz = props => {
                         onClick={_ => refreshRec()} disabled={!editMode}>CANCELAR
                     </Button>
                     <Button color='primary' variant='contained' size='small' startIcon={<DeleteForeverIcon />}
-                        onClick={_ => delRec()} disabled={editMode}>EXCLUIR
+                        onClick={_ => delRec()} disabled={editMode}>APAGAR
                     </Button>
                     <Button color='primary' variant='contained' size='small' startIcon={<KeyboardReturnIcon />}
-                        href="/quizzes" id='backButton' disabled={editMode}>VOLTAR
+                        href="/mkteventList" id='backButton' disabled={editMode}>VOLTAR
                     </Button>
                 </div>
             </div>
             <div className='data-form'>
                 <Grid container spacing={2} >
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                         <TextField
                             value={name}
                             onChange={(event) => { nameSet(event.target.value.toUpperCase()) }}
                             id='name'
-                            label='Nome do Questionário'
+                            label='Nome do Evento'
                             fullWidth={true}
-                            disabled={!editMode}
+                            disabled={!insertMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
                         />
                     </Grid>
                     <Grid item xs={3}>
-                        <FormControlLabel
-                            label="Ativo?"
-                            control={
-                                <Checkbox
-                                    checked={active}
-                                    onChange={(event) => { activeSet(event.target.checked) }}
-                                />
-                            }
+                        <TextField
+                            value={initialDate}
+                            onChange={(event) => { initialDateSet(event.target.value) }}
+                            id='initialDate'
+                            label='Data Inicial'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                            inputProps={{ type: 'date' }}
                         />
                     </Grid>
                     <Grid item xs={3}>
                         <TextField
-                            id='tool'
-                            label='Nome da Ferramenta'
-                            value={toolId}
-                            onChange={(event) => { toolIdSet(event.target.value) }}
+                            value={finalDate}
+                            onChange={(event) => { finalDateSet(event.target.value) }}
+                            id='finalDate'
+                            label='Data Final'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                            inputProps={{ type: 'date' }}
+                        />
+                    </Grid>
+
+                    <Grid item xs={2}>
+                        <TextField
+                            id='profile'
+                            label='Perfil do Evento'
+                            value={profile}
+                            onChange={(event) => { profileSet(event.target.value) }}
                             size='small'
                             fullWidth={true}
-                            disabled={!insertMode}
+                            disabled={!editMode}
                             type='text'
                             variant='outlined'
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             select >
-                            {toolList.map((option, index) => {
-                                return (
-                                    <MenuItem key={index} value={option._id}>{option.name}</MenuItem>
-                                )
-                            })}
+                            <MenuItem key={0} value={'1'}>{'$'}</MenuItem>
+                            <MenuItem key={1} value={'2'}>{'$$'}</MenuItem>
+                            <MenuItem key={2} value={'3'}>{'$$$'}</MenuItem>
+                            <MenuItem key={3} value={'4'}>{'$$$$'}</MenuItem>
+                            <MenuItem key={4} value={'5'}>{'$$$$$$'}</MenuItem>
                         </TextField>
                     </Grid>
-                    <Grid item xs={3} />
 
+                    <Grid item xs={4}>
+                        <TextField
+                            value={address}
+                            onChange={(event) => { addressSet(event.target.value) }}
+                            id='adreess'
+                            label='Endereço'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
                     <Grid item xs={3}>
                         <TextField
-                            value={blockLimit}
-                            onChange={(event) => { blockLimitSet(event.target.value.toUpperCase()) }}
-                            id='blockLimit'
-                            label='Limite de Conjuntos'
+                            value={city}
+                            onChange={(event) => { citySet(event.target.value) }}
+                            id='city'
+                            label='Cidade'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={1}>
+                        <TextField
+                            value={state}
+                            onChange={(event) => { stateSet(event.target.value) }}
+                            id='state'
+                            label='Estado'
                             fullWidth={false}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
-                            type='number'
+                        // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                         <TextField
-                            value={questionLimit}
-                            onChange={(event) => { questionLimitSet(event.target.value.toUpperCase()) }}
-                            id='questionLimit'
-                            label='Limite de Questões'
+                            value={zip}
+                            onChange={(event) => { zipSet(event.target.value) }}
+                            id='zip'
+                            label='CEP'
                             fullWidth={false}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
-                            type='number'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
+                            value={email}
+                            onChange={(event) => { emailSet(event.target.value) }}
+                            id='email'
+                            label='Email'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
                         />
                     </Grid>
                     <Grid item xs={3}>
                         <TextField
-                            value={nOfCards}
-                            // onChange={(event) => { questionLimitSet(event.target.value.toUpperCase()) }}
-                            id='questionLimit'
-                            label='Conjuntos Atuais'
-                            fullWidth={false}
-                            disabled={true}
+                            value={phone}
+                            onChange={(event) => { phoneSet(event.target.value) }}
+                            id='phone'
+                            label='Fone'
+                            fullWidth={true}
+                            disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
-                            type='number'
+                        // inputProps={{ type: 'number' }}
                         />
-                    </Grid>
-                    <Grid item xs={3}>
-                    <Button color='success' variant='contained' size='small' endIcon={<LinkIcon />}
-                            href={`${process.env.REACT_APP_APPRES.trim()}${_id} `} target="_blank" disabled={(_id === '0')}>
-                                Testar Questionário
-                            </Button>
                     </Grid>
                 </Grid>
             </div>
             <Form className='data-form-level1'>
+
                 <div >
                     <AppBar position="static" color="default">
                         <Tabs
@@ -362,21 +319,17 @@ const Quiz = props => {
                             variant="fullWidth"
                             aria-label="full width tabs example"
                         >
-                            <Tab label="Conjuntos" {...posTab(0)} />
+                            <Tab label="Locais" {...posTab(0)} />
                         </Tabs>
                     </AppBar>
-                    <div className='tool-title-sub'>
-                        <div className='data-form-level2'>
-                            <Grid container spacing={5} >
-                                {cardMount()}
-                            </Grid>
-                        </div>
-                        <Button color='primary' variant='contained' size='small' endIcon={<AddIcon />}
-                            onClick={_ => addCard()} disabled={(false)} />
-                    </div>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
+                    <EventLocationList
+                            mktEventId={_id}
+                            editMode={editMode}
+                        />
                     </TabPanel>
                 </div>
+
             </Form>
 
             <Dialog
@@ -437,4 +390,4 @@ const Quiz = props => {
     )
 }
 
-export default Quiz
+export default MktEvent

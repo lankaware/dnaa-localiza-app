@@ -89,6 +89,17 @@
     */
 }
 
+.menu-item {
+    /* background-color: #6c757d; */
+    background-color: #dc3545;
+    color: #fff !important;
+    border: 0ch;
+  }
+  
+  .menu-item:hover {
+    color: #000 !important;
+  }
+  
 .tool-bar {
     /* verified */
     display: flex;
@@ -104,7 +115,7 @@
     border-width: 1px;
     width: 75vw;
     min-height: 60px;
-    background-color: #e0f0f5;
+    background-color: #f7dbbb;
     /* background-color: #b1e2f1; */
     padding-left: 10px;
     padding-top: 10px;
