@@ -326,6 +326,7 @@ const MktEvent = props => {
                     <EventLocationList
                             mktEventId={_id}
                             editMode={editMode}
+                            eventLocation={`${address} ${city} ${state}`}
                         />
                     </TabPanel>
                 </div>

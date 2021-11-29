@@ -13,6 +13,8 @@ import { deleteRec, getList, putRec, postRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
 import { prettyDate, timeBr } from '../../services/dateutils'
 
+import axios from 'axios'
+
 const objectRef = 'eventlocation/'
 const objectId = 'eventlocationid/'
 
@@ -69,6 +71,7 @@ const EventLocationList = props => {
     const [list, setList] = useState([])
     const [locationList, setLocationList] = useState([])
     const mktEventId = props.mktEventId
+    const localOrigin = props.eventLocation
 
     const [_id, _idSet] = useState('')
     const [quizId, quizIdSet] = useState('')
@@ -136,14 +139,15 @@ const EventLocationList = props => {
             .then(items => {
                 var locationListTemp = []
                 items.record.map(item => {
-                    const origin = 'av. mal fiuza de castro, 435'
-                    const dest = 'rua tomas da mota, 55'
-                    calcDistance(origin, dest)
-                        .then(distance => {
-                            console.log('distance', distance)
+                    const localDest = `${item.address} ${item.city} ${item.state}`
+                    const uri = `locationdistance/${localOrigin}/${localDest}`
+                    console.log('uri', uri)
+                    getList(uri)
+                    .then(result => {
+                            console.log('result', result)
                             let line = {
                                 name: item.name,
-                                distance,
+                                distance: result.distance,
                             }
                             locationListTemp = [...locationListTemp, line]
                         })
@@ -152,54 +156,6 @@ const EventLocationList = props => {
             })
         editDialogSet(true)
     }
-
-    const calcDistance = async (localOrigin, localDest) => {
-        var url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${localOrigin}&destinations=${localDest}&key=AIzaSyCrAw2RVU1zgTUJl7MCGJ4kt5W_1tHY9c0`
-        console.log('url', url)
-        const distance =  fetch(url,
-            {
-                method: 'GET',
-                headers: {
-                    'content-type': 'application/json',
-                    'accept': '*/*',
-                },
-            },
-        )
-            .then(data => {
-                data.json()
-                return data.rows[0].elements[0].value
-            })
-
-        return distance
-
-        // {
-        //     "destination_addresses" : [
-        //        "R. Tomás da Mota, 55 - Jardim Pinheiros, São Paulo - SP, 05596-080, Brasil"
-        //     ],
-        //     "origin_addresses" : [
-        //        "Av. Mal. Fiúza de Castro, 435 - Jardim Pinheiros, São Paulo - SP, 05596-000, Brasil"
-        //     ],
-        //     "rows" : [
-        //        {
-        //           "elements" : [
-        //              {
-        //                 "distance" : {
-        //                    "text" : "0,2 km",
-        //                    "value" : 210
-        //                 },
-        //                 "duration" : {
-        //                    "text" : "1 min",
-        //                    "value" : 44
-        //                 },
-        //                 "status" : "OK"
-        //              }
-        //           ]
-        //        }
-        //     ],
-        //     "status" : "OK"
-        //  }
-    }
-
 
     const editConfirm = () => {
         console.log('currentItem', currentItem)
