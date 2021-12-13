@@ -213,11 +213,11 @@ const MktEvent = props => {
                             variant='outlined'
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             select >
-                            <MenuItem key={0} value={'1'}>{'$'}</MenuItem>
-                            <MenuItem key={1} value={'2'}>{'$$'}</MenuItem>
-                            <MenuItem key={2} value={'3'}>{'$$$'}</MenuItem>
-                            <MenuItem key={3} value={'4'}>{'$$$$'}</MenuItem>
-                            <MenuItem key={4} value={'5'}>{'$$$$$$'}</MenuItem>
+                            <MenuItem key={0} value={'$'}>{'$'}</MenuItem>
+                            <MenuItem key={1} value={'$$'}>{'$$'}</MenuItem>
+                            <MenuItem key={2} value={'$$$'}>{'$$$'}</MenuItem>
+                            <MenuItem key={3} value={'$$$$'}>{'$$$$'}</MenuItem>
+                            <MenuItem key={4} value={'$$$$$'}>{'$$$$$$'}</MenuItem>
                         </TextField>
                     </Grid>
 
@@ -323,10 +323,10 @@ const MktEvent = props => {
                         </Tabs>
                     </AppBar>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
-                    <EventLocationList
+                        <EventLocationList
                             mktEventId={_id}
                             editMode={editMode}
-                            eventLocation={`${address} ${city} ${state}`}
+                            eventAddress={`${address} ${city} ${state}`}
                         />
                     </TabPanel>
                 </div>
@@ -344,19 +344,16 @@ const MktEvent = props => {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={delCancel} color="primary" variant='contained' autoFocus
-                    >Cancelar
+                    <Button onClick={delCancel} color="primary" variant='contained' autoFocus>
+                        Cancelar
                     </Button>
-                    <Button onClick={delConfirm} color="secondary" variant='contained'
-                    >Confirmar
+                    <Button onClick={delConfirm} color="secondary" variant='contained'>
+                        Confirmar
                     </Button>
                 </DialogActions>
             </Dialog>
 
-            <Dialog
-                open={deleteInfoDialog}
-            // onClose={delInformClose}
-            >
+            <Dialog open={deleteInfoDialog}>
                 <DialogTitle id="alert-dialog-title">{"Registro removido do cadastro."}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
@@ -370,10 +367,7 @@ const MktEvent = props => {
                 </DialogActions>
             </Dialog>
 
-            <Dialog
-                open={emptyRecDialog}
-            // onClose={emptyRecClose}
-            >
+            <Dialog open={emptyRecDialog}>
                 <DialogTitle id="alert-dialog-title">{"Registro sem descrição ou já existente não pode ser gravado."}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">

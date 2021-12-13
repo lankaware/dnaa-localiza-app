@@ -7,16 +7,15 @@ import {
     DialogTitle, DialogContent, DialogActions
 } from '@mui/material'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt'
 
 import { useStyles } from '../../services/stylemui'
 import { deleteRec, getList, putRec, postRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
 import { prettyDate, timeBr } from '../../services/dateutils'
 
-import axios from 'axios'
-
 const objectRef = 'eventlocation/'
-const objectId = 'eventlocationid/'
+const objectId = 'eventlocationeventid/'
 
 var currentItem = '0'
 
@@ -24,27 +23,27 @@ const EventLocationList = props => {
 
     const columns = [
         {
-            name: 'Questionário',
-            selector: row => row.quiz_name,
+            name: 'Nome',
+            selector: row => row.location_name,
             sortable: true,
             width: '20vw',
         },
         {
-            name: 'Data de Envio',
-            selector: row => row.responseDate,
+            name: 'Endereço',
+            selector: row => row.location_address,
             sortable: true,
-            width: '10vw',
+            width: '20vw',
             cell: row => (prettyDate(row.responseDate))
         },
         {
-            name: 'Data Limite',
-            selector: row => row.limitDate,
+            name: 'Perfil',
+            selector: row => row.location_profile,
             sortable: true,
             width: '10vw',
             cell: row => (prettyDate(row.limitDate))
         },
         {
-            name: 'Link para Responder',
+            name: 'distance',
             selector: row => row.limitDate,
             sortable: true,
             width: '30vw',
@@ -71,23 +70,22 @@ const EventLocationList = props => {
     const [list, setList] = useState([])
     const [locationList, setLocationList] = useState([])
     const mktEventId = props.mktEventId
-    const localOrigin = props.eventLocation
+    const localOrigin = props.eventAddress
 
     const [_id, _idSet] = useState('')
-    const [quizId, quizIdSet] = useState('')
-    const [quizName, quizNameSet] = useState('')
-    const [limitDate, limitDateSet] = useState('')
-    const [socialName, socialNameSet] = useState('')
-    const [role, roleSet] = useState('')
-    const [email, emailSet] = useState('')
-    const [quizLink, quizLinkSet] = useState('')
-
+    const [locationId, locationIdSet] = useState('')
+    const [distance, distanceSet] = useState('')
+    const [disponibility, disponibilitySet] = useState('')
+    const [selected, selectedSet] = useState('')
+    const [contracted, contractedSet] = useState('')
+ 
     const [editDialog, editDialogSet] = useState(false)
+    const [localSelectDialog, localSelectDialogSet] = useState(false)
     const [appUpdate, setAppUpdate] = useState(true)
 
     useEffect(() => {
         if (mktEventId !== '0') {
-            getList(objectRef + mktEventId)
+            getList(objectId + mktEventId)
                 .then(items => {
                     setList(items.record)
                 })
@@ -95,40 +93,23 @@ const EventLocationList = props => {
         setAppUpdate(true)
     }, [mktEventId, appUpdate])
 
-    const refreshRec = () => {
-        let recObj = {}
-        recObj = JSON.stringify(recObj)
-        putRec(objectRef, recObj)
-            .then(items => {
-                setList(items.record)
-            })
-    }
-
     const editOpen = (rowid) => {
-        //       if (!props.editMode) return
-
-        // const currentItemTemp = itemList.findIndex((item) => { return item._id === rowid })
-
         if (rowid) {
             getList(`${objectId}${rowid}`)
                 .then(items => {
                     _idSet(items.record[0]._id || '')
-                    quizIdSet(items.record[0].quiz_id || '')
-                    quizNameSet(items.record[0].quiz_name[0] || '')
-                    limitDateSet((items.record[0].limitDate || '').substr(0, 10))
-                    socialNameSet(items.record[0].socialName || '')
-                    roleSet(items.record[0].role || '')
-                    emailSet(items.record[0].email || '')
-                    quizLinkSet(`${process.env.REACT_APP_APPRES.trim()}${items.record[0].quiz_id}`)
+                    locationIdSet(items.record[0].location_id || '')
+                    distanceSet(items.record[0].distance || 0)
+                    disponibilitySet(items.record[0].disponibility || '')
+                    selectedSet(items.record[0].selected || false)
+                    contractedSet(items.record[0].contracted || false)
                 })
         } else {
-            quizIdSet('')
-            quizNameSet('')
-            limitDateSet('')
-            socialNameSet('')
-            roleSet('')
-            emailSet('')
-            quizLinkSet('')
+            locationIdSet('')
+            distanceSet(0)
+            disponibilitySet('')
+            selectedSet(false)
+            contractedSet('')
         }
         currentItem = rowid || '0'
         editDialogSet(true)
@@ -154,18 +135,18 @@ const EventLocationList = props => {
                 })
                 setLocationList(locationListTemp)
             })
-        editDialogSet(true)
+        localSelectDialogSet(true)
     }
 
     const editConfirm = () => {
         console.log('currentItem', currentItem)
         let recObj = {
-            mktEvent_id: mktEventId,
-            quiz_id: quizId,
-            limitDate,
-            socialName,
-            role,
-            email,
+            event_id: mktEventId,
+            location_id: locationId,
+            distance,
+            disponibility,
+            selected,
+            contracted,
         }
         if (currentItem !== '0') {
             recObj = JSON.stringify(recObj);
@@ -212,16 +193,17 @@ const EventLocationList = props => {
                     onRowClicked={(row, event) => { editOpen(row._id) }}
                 />
             </div>
-            <Box m={1}>
-                <Button color="primary" size='small' variant='contained' startIcon={<OpenInNewIcon />}
-                    disabled={mktEventId === '0'}
-                    onClick={insertOpen} >INCLUIR
+            <Box m={1} >
+                <Button color="warning" size='small' variant='contained' startIcon={<OpenInNewIcon />}
+                    disabled={mktEventId === '0'} onClick={insertOpen} sx={{'margin': '0 10px'}}>
+                        INCLUIR LOCAL
+                </Button>
+                <Button color="success" size='small' variant='contained' startIcon={<AddLocationAltIcon />}
+                    disabled={mktEventId === '0'} onClick={insertOpen} sx={{'margin': '0 10px'}}>
+                        BUSCAR POR PROXIMIDADE
                 </Button>
             </Box>
-
-            <Dialog
-                open={editDialog}
-            >
+            <Dialog open={localSelectDialog} >
                 <DialogTitle id="alert-dialog-title">{"Locais Próximos"}</DialogTitle>
                 {/* <p/> */}
                 <DialogContent dividers>
