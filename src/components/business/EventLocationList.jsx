@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 
 import {
-    Button, Box, Grid, TextField, MenuItem, Dialog,
-    DialogTitle, DialogContent, DialogActions
+    Button, Box, Grid, TextField, Dialog, InputLabel,
+    DialogTitle, DialogContent, DialogActions, Select, FormControlLabel, Checkbox,
 } from '@mui/material'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt'
@@ -15,7 +15,8 @@ import { customStyles1, paginationBr } from '../../services/datatablestyle'
 import { prettyDate, timeBr } from '../../services/dateutils'
 
 const objectRef = 'eventlocation/'
-const objectId = 'eventlocationeventid/'
+const objectId = 'eventlocationid/'
+const objectChild = 'eventlocationevent/'
 
 var currentItem = '0'
 
@@ -33,21 +34,25 @@ const EventLocationList = props => {
             selector: row => row.location_address,
             sortable: true,
             width: '20vw',
-            cell: row => (prettyDate(row.responseDate))
         },
         {
             name: 'Perfil',
             selector: row => row.location_profile,
             sortable: true,
             width: '10vw',
-            cell: row => (prettyDate(row.limitDate))
         },
         {
-            name: 'distance',
-            selector: row => row.limitDate,
+            name: 'Distância',
+            selector: row => row.distance,
             sortable: true,
-            width: '30vw',
-            cell: row => (`${process.env.REACT_APP_APPRES.trim()}${row.quiz_id}`)
+            width: '10vw',
+        },
+        {
+            name: 'Escolhido',
+            selector: row => row.selected,
+            width: '10vw',
+            'data-tag': "allowRowEvents",
+            cell: row => {return <Checkbox checked={row.selected} onChange={(event) => { selectedSet(event.target.checked) }} />}
         },
     ];
 
@@ -68,7 +73,7 @@ const EventLocationList = props => {
 
     const classes = useStyles();
     const [list, setList] = useState([])
-    const [locationList, setLocationList] = useState([])
+    const [locationList, locationListSet] = useState([])
     const mktEventId = props.mktEventId
     const localOrigin = props.eventAddress
 
@@ -76,20 +81,26 @@ const EventLocationList = props => {
     const [locationId, locationIdSet] = useState('')
     const [distance, distanceSet] = useState('')
     const [disponibility, disponibilitySet] = useState('')
-    const [selected, selectedSet] = useState('')
-    const [contracted, contractedSet] = useState('')
- 
+    const [selected, selectedSet] = useState(false)
+    const [contracted, contractedSet] = useState(false)
+
     const [editDialog, editDialogSet] = useState(false)
     const [localSelectDialog, localSelectDialogSet] = useState(false)
     const [appUpdate, setAppUpdate] = useState(true)
+    const [locationSelectList, locationSelectListSet] = useState([])
 
     useEffect(() => {
         if (mktEventId !== '0') {
-            getList(objectId + mktEventId)
+            getList(objectChild + mktEventId)
                 .then(items => {
-                    setList(items.record)
+                    if (items) setList(items.record)
                 })
         }
+        getList('location/')
+            .then(items => {
+                locationListSet(items.record)
+            })
+
         setAppUpdate(true)
     }, [mktEventId, appUpdate])
 
@@ -97,26 +108,31 @@ const EventLocationList = props => {
         if (rowid) {
             getList(`${objectId}${rowid}`)
                 .then(items => {
-                    _idSet(items.record[0]._id || '')
-                    locationIdSet(items.record[0].location_id || '')
-                    distanceSet(items.record[0].distance || 0)
-                    disponibilitySet(items.record[0].disponibility || '')
-                    selectedSet(items.record[0].selected || false)
-                    contractedSet(items.record[0].contracted || false)
+                    _idSet(items.record._id || '')
+                    locationIdSet(items.record.location_id || '')
+                    distanceSet(items.record.distance || 0)
+                    disponibilitySet(items.record.disponibility || '')
+                    selectedSet(items.record.selected || false)
+                    contractedSet(items.record.contracted || false)
                 })
         } else {
             locationIdSet('')
             distanceSet(0)
             disponibilitySet('')
             selectedSet(false)
-            contractedSet('')
+            contractedSet(false)
         }
         currentItem = rowid || '0'
         editDialogSet(true)
     }
 
-    const insertOpen = () => {
-        getList('location/')
+    const localSelectOpen = () => {
+        // let searchParm = { '$and': [{ 'name': { '$gte': req.params.name } }, { 'name': { '$lte': req.params.name + '~' } }] }
+
+        let recObj = { '$and': [{ 'profile': props.profile }, { 'zip': { "$regex": props.zip } }] }
+        recObj = JSON.stringify(recObj)
+
+        putRec('location/', recObj)
             .then(items => {
                 var locationListTemp = []
                 items.record.map(item => {
@@ -124,7 +140,7 @@ const EventLocationList = props => {
                     const uri = `locationdistance/${localOrigin}/${localDest}`
                     console.log('uri', uri)
                     getList(uri)
-                    .then(result => {
+                        .then(result => {
                             console.log('result', result)
                             let line = {
                                 name: item.name,
@@ -133,12 +149,33 @@ const EventLocationList = props => {
                             locationListTemp = [...locationListTemp, line]
                         })
                 })
-                setLocationList(locationListTemp)
+                locationSelectListSet(locationListTemp)
             })
         localSelectDialogSet(true)
     }
 
     const editConfirm = () => {
+        let recObj = {
+            event_id: mktEventId,
+            location_id: locationId,
+            distance,
+            disponibility,
+            selected,
+            contracted,
+        }
+        if (currentItem !== '0') {
+            recObj = JSON.stringify(recObj);
+            putRec(objectId + _id, recObj)
+        } else {
+            recObj = JSON.stringify(recObj);
+            postRec(objectRef, recObj)
+            .then(result => console.log('result', result))
+        }
+        setAppUpdate(false)
+        editDialogSet(false)
+    }
+
+    const localSelectConfirm = () => {
         console.log('currentItem', currentItem)
         let recObj = {
             event_id: mktEventId,
@@ -156,12 +193,17 @@ const EventLocationList = props => {
             postRec(objectRef, recObj)
         }
         setAppUpdate(false)
-        editDialogSet(false)
+        localSelectDialogSet(false)
     }
 
     const editCancel = () => {
         setAppUpdate(false)
         editDialogSet(false)
+    }
+
+    const localSelectCancel = () => {
+        setAppUpdate(false)
+        localSelectDialogSet(false)
     }
 
     const editDelete = () => {
@@ -195,14 +237,15 @@ const EventLocationList = props => {
             </div>
             <Box m={1} >
                 <Button color="warning" size='small' variant='contained' startIcon={<OpenInNewIcon />}
-                    disabled={mktEventId === '0'} onClick={insertOpen} sx={{'margin': '0 10px'}}>
-                        INCLUIR LOCAL
+                    disabled={mktEventId === '0'} onClick={_ => editOpen('0')} sx={{ 'margin': '0 10px' }}>
+                    INCLUIR LOCAL
                 </Button>
                 <Button color="success" size='small' variant='contained' startIcon={<AddLocationAltIcon />}
-                    disabled={mktEventId === '0'} onClick={insertOpen} sx={{'margin': '0 10px'}}>
-                        BUSCAR POR PROXIMIDADE
+                    disabled={mktEventId === '0'} onClick={localSelectOpen} sx={{ 'margin': '0 10px' }}>
+                    BUSCAR POR PROXIMIDADE
                 </Button>
             </Box>
+
             <Dialog open={localSelectDialog} >
                 <DialogTitle id="alert-dialog-title">{"Locais Próximos"}</DialogTitle>
                 {/* <p/> */}
@@ -213,7 +256,7 @@ const EventLocationList = props => {
                             noHeader={true}
                             columns={dialogColumns}
                             customStyles={customStyles1}
-                            data={locationList}
+                            data={locationSelectList}
                             Clicked
                             keyField={'_id'}
                             highlightOnHover={true}
@@ -224,6 +267,81 @@ const EventLocationList = props => {
                             noDataComponent={'Nenhum registro disponível.'}
                         // onRowClicked={(row, event) => { editOpen(row._id) }}
                         />
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={localSelectConfirm} color="primary" variant='contained' size='small'>
+                        SELECIONAR
+                    </Button>
+                    <Button onClick={localSelectCancel} color="primary" variant='contained' size='small'>
+                        CANCELAR
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={editDialog} >
+                <DialogTitle id="alert-dialog-title">{"Escolher Local"}</DialogTitle>
+                {/* <p/> */}
+                <DialogContent dividers>
+                    <div className='modal-form'>
+                        <Grid container spacing={2} >
+                            <Grid item xs={12}>
+                                <InputLabel id='location-select-label' style={{ 'margin': '0px 0px 0px 0px', 'color': 'primary' }} >Local</InputLabel>
+                                <Select
+                                    native
+                                    value={locationId}
+                                    onChange={event => { locationIdSet(locationList[locationList.findIndex(e => e._id === event.target.value)]._id) }}
+                                    id='location-select'
+                                    labelId='location-select-label'
+                                    autoFocus={true}
+                                    variant='outlined'
+                                    size='small'
+                                >
+                                    {locationList.map((item, i) => {
+                                        return <option key={i} value={item._id}>{`${item.name} / ${item.profile} / ${item.address}`}</option>
+                                    })}
+                                </Select>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <TextField
+                                    value={distance}
+                                    onChange={(event) => { distanceSet(event.target.value) }}
+                                    id='distance'
+                                    label='Distância do Evento'
+                                    fullWidth={true}
+                                    disabled={true}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    type='number'
+                                />
+                            </Grid>
+
+                            <Grid item xs={4}>
+                                <FormControlLabel
+                                    label="Selecionado?"
+                                    control={
+                                        <Checkbox
+                                            checked={selected}
+                                            onChange={(event) => { selectedSet(event.target.checked) }}
+                                        />
+                                    }
+                                />
+                            </Grid>
+
+                            <Grid item xs={4}>
+                                <FormControlLabel
+                                    label="Contratado?"
+                                    control={
+                                        <Checkbox
+                                            checked={contracted}
+                                            onChange={(event) => { contractedSet(event.target.checked) }}
+                                        />
+                                    }
+                                />
+                            </Grid>
+
+                        </Grid>
                     </div>
                 </DialogContent>
                 <DialogActions>
