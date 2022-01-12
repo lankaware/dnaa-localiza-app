@@ -7,6 +7,7 @@ import MktEvent from '../business/MktEvent'
 import MktEventList from '../business/MktEventList'
 import Location from '../business/Location'
 import LocationList from '../business/LocationList'
+import EmailParms from '../business/EmailParms'
 
 const AppRouters = props => (
     <main className='content'>
@@ -19,6 +20,7 @@ const AppRouters = props => (
             <Route exact path="/mkteventlist" component={MktEventList} />
             <Route exact path="/location/:id" component={Location} />
             <Route exact path="/locationlist" component={LocationList} />
+            <Route exact path="/emailparms" component={EmailParms} />
             <Route path="*">
                 <h1>Página em construção.</h1>
             </Route>
@@ -26,5 +28,3 @@ const AppRouters = props => (
     </main>
 )
 export default AppRouters
-
-
