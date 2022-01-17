@@ -165,7 +165,7 @@ const MktEvent = props => {
                     </Box>
                     <Box m={1}>
                         <Button color='primary' variant='contained' size='small' startIcon={<KeyboardReturnIcon />}
-                            href="/mkteventList" id='backButton' disabled={editMode}>VOLTAR
+                            href="/mkteventList" id='backButton' disabled={editMode}>LISTA
                         </Button>
                     </Box>
                 </div>

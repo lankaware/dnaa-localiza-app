@@ -8,6 +8,7 @@ import {
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt'
 import SocialDistanceIcon from '@mui/icons-material/SocialDistance'
+import EmailIcon from '@mui/icons-material/Email'
 
 import { useStyles } from '../../services/stylemui'
 import { deleteRec, getList, putRec, postRec } from '../../services/apiconnect'
@@ -33,7 +34,7 @@ const EventLocationList = props => {
             selector: row => row.location_name,
             sortable: true,
             width: '20vw',
-            cell: row => (<Link to={"/location/" + row.location_id}>{row.location_name}</Link>)
+            cell: row => (<Link to={"/location/" + row.location_id} target="_blank">{row.location_name}</Link>)
         },
         {
             name: 'Endereço',
@@ -273,6 +274,11 @@ const EventLocationList = props => {
         return null
     }
 
+    const sendMessageSelected = (allSelected, selectedCount, selectedRows) => {
+        //selectedToSave = selectedRows
+        return null
+    }
+
     return (
         <div>
             <div >
@@ -309,6 +315,10 @@ const EventLocationList = props => {
                 <Button color="success" size='small' variant='contained' startIcon={<AddLocationAltIcon />}
                     disabled={mktEventId === '0'} onClick={localSelectOpen} sx={{ 'margin': '0 10px' }}>
                     BUSCAR POR PROXIMIDADE
+                </Button>
+                <Button color="secondary" size='small' variant='contained' startIcon={<EmailIcon />}
+                    disabled={mktEventId === '0'} onClick={sendMessageSelected} sx={{ 'margin': '0 10px' }}>
+                    ENVIAR MENSAGEM
                 </Button>
             </Box>
 

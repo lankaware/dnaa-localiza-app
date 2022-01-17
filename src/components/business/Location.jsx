@@ -164,7 +164,7 @@ const Location = props => {
                     </Box>
                     <Box m={1}>
                     <Button color='primary' variant='contained' size='small' startIcon={<KeyboardReturnIcon />}
-                        href="/locationList" id='backButton' disabled={editMode}>VOLTAR
+                        href="/locationList" id='backButton' disabled={editMode}>LISTA
                     </Button>
                     </Box>
                 </div>
@@ -320,7 +320,7 @@ const Location = props => {
                             <MenuItem key={4} value={'5'}>{'$$$$$'}</MenuItem>
                         </TextField>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                         <TextField
                             value={disponibility}
                             onChange={(event) => { disponibilitySet(event.target.value) }}
@@ -348,7 +348,7 @@ const Location = props => {
                             variant="fullWidth"
                             aria-label="full width tabs example"
                         >
-                            <Tab label="Locais" {...posTab(0)} />
+                            <Tab label="Eventos Realizados" {...posTab(0)} />
                         </Tabs>
                     </AppBar>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
