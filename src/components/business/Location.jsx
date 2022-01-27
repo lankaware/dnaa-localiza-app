@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Form } from 'reactstrap';
 import {
-    Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent,
-    DialogContentText, DialogTitle, Checkbox, FormControlLabel, Box,
+    Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
     AppBar, Tabs, Tab, MenuItem
 } from '@mui/material'
 
@@ -18,12 +17,10 @@ import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
 import TabPanel, { posTab } from '../commons/TabPanel'
 import { theme } from '../../services/customtheme'
 
-import { timeBr } from '../../services/dateutils';
-
 const objectRef = 'location/'
 const objectId = 'locationid/'
 
-const MktEvent = props => {
+const Location = props => {
 
     let { id } = useParams()
 
@@ -31,6 +28,7 @@ const MktEvent = props => {
     const [name, nameSet] = useState('')
     const [profile, profileSet] = useState('')
     const [address, addressSet] = useState('')
+    const [neighborhood, neighborhoodSet] = useState('')
     const [city, citySet] = useState('')
     const [state, stateSet] = useState('')
     const [zip, zipSet] = useState('')
@@ -60,6 +58,7 @@ const MktEvent = props => {
                     nameSet(items.record.name || '')
                     profileSet(items.record.profile || '')
                     addressSet(items.record.address || '')
+                    neighborhoodSet(items.record.neighborhood || '')
                     citySet(items.record.city || '')
                     stateSet(items.record.state || '')
                     zipSet(items.record.zip || '')
@@ -82,6 +81,7 @@ const MktEvent = props => {
             name,
             profile,
             address,
+            neighborhood,
             city,
             state,
             zip,
@@ -164,7 +164,7 @@ const MktEvent = props => {
                     </Box>
                     <Box m={1}>
                     <Button color='primary' variant='contained' size='small' startIcon={<KeyboardReturnIcon />}
-                        href="/locationList" id='backButton' disabled={editMode}>VOLTAR
+                        href="/locationList" id='backButton' disabled={editMode}>LISTA
                     </Button>
                     </Box>
                 </div>
@@ -184,26 +184,6 @@ const MktEvent = props => {
                             size='small'
                         />
                     </Grid>
-                    <Grid item xs={2}>
-                        <TextField
-                            id='profile'
-                            label='Perfil do Local'
-                            value={profile}
-                            onChange={(event) => { profileSet(event.target.value) }}
-                            size='small'
-                            fullWidth={true}
-                            disabled={!editMode}
-                            type='text'
-                            variant='outlined'
-                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                            select >
-                            <MenuItem key={0} value={'$'}>{'$'}</MenuItem>
-                            <MenuItem key={1} value={'$$'}>{'$$'}</MenuItem>
-                            <MenuItem key={2} value={'$$$'}>{'$$$'}</MenuItem>
-                            <MenuItem key={3} value={'$$$$'}>{'$$$$'}</MenuItem>
-                            <MenuItem key={4} value={'$$$$$'}>{'$$$$$$'}</MenuItem>
-                        </TextField>
-                    </Grid>
 
                     <Grid item xs={4}>
                         <TextField
@@ -216,7 +196,19 @@ const MktEvent = props => {
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
-                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={3}>
+                        <TextField
+                            value={neighborhood}
+                            onChange={(event) => { neighborhoodSet(event.target.value) }}
+                            id='neighborhood'
+                            label='Bairro'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
                         />
                     </Grid>
                     <Grid item xs={3}>
@@ -261,7 +253,7 @@ const MktEvent = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={3}>
                         <TextField
                             value={email}
                             onChange={(event) => { emailSet(event.target.value) }}
@@ -275,7 +267,7 @@ const MktEvent = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                         <TextField
                             value={phone}
                             onChange={(event) => { phoneSet(event.target.value) }}
@@ -308,7 +300,27 @@ const MktEvent = props => {
                             <MenuItem key={1} value={'pessoalmente'}>{'pessoalmente'}</MenuItem>
                         </TextField>       
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={2}>
+                        <TextField
+                            id='profile'
+                            label='Perfil do Local'
+                            value={profile}
+                            onChange={(event) => { profileSet(event.target.value) }}
+                            size='small'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            type='text'
+                            variant='outlined'
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            select >
+                            <MenuItem key={0} value={'1'}>{'$'}</MenuItem>
+                            <MenuItem key={1} value={'2'}>{'$$'}</MenuItem>
+                            <MenuItem key={2} value={'3'}>{'$$$'}</MenuItem>
+                            <MenuItem key={3} value={'4'}>{'$$$$'}</MenuItem>
+                            <MenuItem key={4} value={'5'}>{'$$$$$'}</MenuItem>
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={6}>
                         <TextField
                             value={disponibility}
                             onChange={(event) => { disponibilitySet(event.target.value) }}
@@ -336,7 +348,7 @@ const MktEvent = props => {
                             variant="fullWidth"
                             aria-label="full width tabs example"
                         >
-                            <Tab label="Locais" {...posTab(0)} />
+                            <Tab label="Eventos Realizados" {...posTab(0)} />
                         </Tabs>
                     </AppBar>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
@@ -403,4 +415,4 @@ const MktEvent = props => {
     )
 }
 
-export default MktEvent
+export default Location

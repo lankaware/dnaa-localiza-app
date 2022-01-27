@@ -29,6 +29,18 @@ const CustomerList = props => {
             sortable: true,
             width: '20vw',
         },
+        {
+            name: 'CEP',
+            selector: row => row.zip,
+            sortable: true,
+            width: '10vw',
+        },
+        {
+            name: 'Perfil',
+            selector: row => row.profile,
+            sortable: true,
+            width: '10vw',
+        },
     ];
 
     const classes = useStyles();

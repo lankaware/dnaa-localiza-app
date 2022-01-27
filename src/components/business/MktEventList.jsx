@@ -10,6 +10,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import { useStyles } from '../../services/stylemui'
 import { getList, putRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
+import { dateBr } from '../../services/dateutils'
 
 const objectRef = 'mktevent/'
 
@@ -24,10 +25,18 @@ const CustomerList = props => {
             cell: row => (<Link to={"/mktevent/" + row._id}>{row.name}</Link>)
         },
         {
-            name: 'Ativo',
-            selector: row => row.active,
+            name: 'Data Inicial',
+            selector: row => row.initialDate,
             sortable: true,
             width: '10vw',
+            cell: row => (<div>{dateBr(row.initialDate)}</div>)
+        },
+        {
+            name: 'Data Final',
+            selector: row => row.finalDate,
+            sortable: true,
+            width: '10vw',
+            cell: row => (<div>{dateBr(row.finalDate)}</div>)
         },
     ];
 

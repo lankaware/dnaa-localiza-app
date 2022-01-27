@@ -24,7 +24,6 @@ const AppMenu = props => {
         setConfirmDialog(false)
     }
 
-
     const menu = (authent) => {
         if (authent) {
             return (
@@ -37,6 +36,16 @@ const AppMenu = props => {
                             {/* <DropdownMenu>  */}
                             <DropdownItem className='menu-item' href="/mkteventlist">Ações Promocionais</DropdownItem>
                             <DropdownItem className='menu-item' href="/locationlist">Pontos fixos</DropdownItem>
+                        </DropdownMenu>
+                    </UncontrolledDropdown>
+                    <UncontrolledDropdown nav inNavbar >
+                        <DropdownToggle nav caret className='nav-item text-white' >
+                            Configurações
+                        </DropdownToggle>
+                        <DropdownMenu className='menu-item'>
+                            {/* <DropdownMenu>  */}
+                            <DropdownItem className='menu-item' href="/login">Logins</DropdownItem>
+                            <DropdownItem className='menu-item' href="/emailparms">Email</DropdownItem>
                         </DropdownMenu>
                     </UncontrolledDropdown>
                 </Nav>
