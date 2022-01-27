@@ -139,7 +139,7 @@ const MktEvent = props => {
         <div>
             <div className='tool-bar'>
                 <div >
-                    <Typography variant='h5' className='tool-title' noWrap={true}>Registro de Local</Typography>
+                    <Typography variant='h5' className='tool-title' noWrap={true}>Registro de Pontos</Typography>
                 </div>
                 <div className='tool-buttons'>
                     <Box m={1}>
@@ -313,7 +313,7 @@ const MktEvent = props => {
                             value={disponibility}
                             onChange={(event) => { disponibilitySet(event.target.value) }}
                             id='disponibility'
-                            label='Disponibilidade'
+                            label='Disponibilidade Geral'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}

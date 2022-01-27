@@ -17,7 +17,7 @@ const CustomerList = props => {
 
     const columns = [
         {
-            name: 'Nome da Evento',
+            name: 'Nome da Ação',
             selector: row => row.name,
             sortable: true,
             width: '30vw',
@@ -64,7 +64,7 @@ const CustomerList = props => {
         <div>
             <div className='tool-bar'>
                 <div >
-                    <Typography variant='h6' className='tool-title' noWrap={true}>Lista de Eventos</Typography>
+                    <Typography variant='h6' className='tool-title' noWrap={true}>Lista de Ações</Typography>
                 </div>
 
                 <div className={classes.toolButtons + ' button-link'}>
@@ -90,7 +90,7 @@ const CustomerList = props => {
                         value={nameFilter}
                         onChange={(event) => { nameFilterSet(event.target.value.toUpperCase()) }}
                         id='nameFilter'
-                        label='Nome do Cliente'
+                        label='Nome da Incorporadora'
                         fullWidth={false}
                         InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                         onKeyPress={(e) => { launchSearch(e) }}

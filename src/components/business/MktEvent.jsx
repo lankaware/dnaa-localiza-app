@@ -136,7 +136,7 @@ const MktEvent = props => {
         <div>
             <div className='tool-bar'>
                 <div >
-                    <Typography variant='h5' className='tool-title' noWrap={true}>Registro de Evento</Typography>
+                    <Typography variant='h5' className='tool-title' noWrap={true}>Registro de Ações Promocionais</Typography>
                 </div>
                 <div className='tool-buttons'>
                     <Box m={1}>
@@ -173,7 +173,7 @@ const MktEvent = props => {
                             value={name}
                             onChange={(event) => { nameSet(event.target.value.toUpperCase()) }}
                             id='name'
-                            label='Nome do Evento'
+                            label='Nome da ação'
                             fullWidth={true}
                             disabled={!insertMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}

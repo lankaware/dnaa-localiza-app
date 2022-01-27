@@ -35,8 +35,8 @@ const AppMenu = props => {
                         </DropdownToggle>
                         <DropdownMenu className='menu-item'>
                             {/* <DropdownMenu>  */}
-                            <DropdownItem className='menu-item' href="/mkteventlist">Eventos</DropdownItem>
-                            <DropdownItem className='menu-item' href="/locationlist">Locais</DropdownItem>
+                            <DropdownItem className='menu-item' href="/mkteventlist">Ações Promocionais</DropdownItem>
+                            <DropdownItem className='menu-item' href="/locationlist">Pontos fixos</DropdownItem>
                         </DropdownMenu>
                     </UncontrolledDropdown>
                 </Nav>

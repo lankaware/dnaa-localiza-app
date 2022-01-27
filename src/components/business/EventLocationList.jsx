@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
+import { regionPerCEP } from '../commons/RegionPerCEP'
 
 import {
     Button, Box, Grid, TextField, Dialog, InputLabel,
@@ -35,6 +36,13 @@ const EventLocationList = props => {
             sortable: true,
             width: '20vw',
         },
+        {
+            name: 'Região',
+            selector: row => row.zip,
+            sortable: true,
+            width: '20vw',
+        },
+
         {
             name: 'Perfil',
             selector: row => row.location_profile,
@@ -79,6 +87,7 @@ const EventLocationList = props => {
 
     const [_id, _idSet] = useState('')
     const [locationId, locationIdSet] = useState('')
+    const [locationZip, locationZipSet] = useState('')
     const [distance, distanceSet] = useState('')
     const [disponibility, disponibilitySet] = useState('')
     const [selected, selectedSet] = useState(false)
@@ -108,8 +117,10 @@ const EventLocationList = props => {
         if (rowid) {
             getList(`${objectId}${rowid}`)
                 .then(items => {
+                    console.log(items)
                     _idSet(items.record._id || '')
                     locationIdSet(items.record.location_id || '')
+                    locationZipSet(items.record.zip || '')
                     distanceSet(items.record.distance || 0)
                     disponibilitySet(items.record.disponibility || '')
                     selectedSet(items.record.selected || false)
