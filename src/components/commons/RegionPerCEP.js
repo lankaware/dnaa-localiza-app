@@ -1,4 +1,5 @@
-export function regionPerCEP (CEP) {
+export function regionPerCEP (CepArray) {
+    let CEP = CepArray[0];
     let regionNum = CEP.substr(0,2);
     let regionName;
     switch (regionNum){

@@ -45,9 +45,11 @@ const EventLocationList = props => {
         },
         {
             name: 'Região',
-            selector: row => row.zip,
+            selector: row => row.location_zip,
             sortable: true,
             width: '20vw',
+            cell: row => {return regionPerCEP(row.location_zip)}
+
         },
 
         {
@@ -153,6 +155,7 @@ const EventLocationList = props => {
         } else {
             locationIdSet('')
             distanceSet(0)
+            locationZipSet("")
             disponibilitySet('')
             selectedSet(false)
             contractedSet(false)
