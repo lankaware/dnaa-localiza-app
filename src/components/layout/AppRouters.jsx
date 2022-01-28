@@ -8,6 +8,10 @@ import MktEventList from '../business/MktEventList'
 import Location from '../business/Location'
 import LocationList from '../business/LocationList'
 import EmailParms from '../business/EmailParms'
+import REDeveloperList from '../business/REDeveloperList'
+import REDeveloper from '../business/REDeveloper'
+import REProjectList from '../business/REProjectList'
+import REProject from '../business/REProject'
 
 const AppRouters = props => (
     <main className='content'>
@@ -21,6 +25,10 @@ const AppRouters = props => (
             <Route exact path="/location/:id" component={Location} />
             <Route exact path="/locationlist" component={LocationList} />
             <Route exact path="/emailparms" component={EmailParms} />
+            <Route exact path="/redeveloperlist" component={REDeveloperList} />
+            <Route exact path="/redeveloper/:id" component={REDeveloper} />
+            <Route exact path="/reprojectlist" component={REProjectList} />
+            <Route exact path="/reproject/:id" component={REProject} />
             <Route path="*">
                 <h1>Página em construção.</h1>
             </Route>

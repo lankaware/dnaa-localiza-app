@@ -99,7 +99,7 @@ const CustomerList = props => {
                         value={nameFilter}
                         onChange={(event) => { nameFilterSet(event.target.value.toUpperCase()) }}
                         id='nameFilter'
-                        label='Nome da Incorporadora'
+                        label='Nome da Ação'
                         fullWidth={false}
                         InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                         onKeyPress={(e) => { launchSearch(e) }}
