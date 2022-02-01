@@ -16,7 +16,6 @@ import { useStyles } from '../../services/stylemui'
 import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
 import TabPanel, { posTab } from '../commons/TabPanel'
 import { theme } from '../../services/customtheme'
-import REProjectList from './REProjectList';
 
 
 const objectRef = 'reproject/'
@@ -33,6 +32,12 @@ const REProject = props => {
     const [city, citySet] = useState('')
     const [state, stateSet] = useState('')
     const [zip, zipSet] = useState('')
+    const [redeveloperId, redeveloperIdSet] = useState('')
+
+    const [email, emailSet] = useState('')
+    const [phone, phoneSet] = useState('')
+
+    const [redeveloperList, redeveloperListSet] = useState([])
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -47,20 +52,41 @@ const REProject = props => {
     const classes = useStyles()
 
     useEffect(() => {
+        getList('redeveloper')
+            .then(items => {
+                redeveloperListSet(items.record)
+            })
         if (id !== '0') {
             getList(objectId + id)
                 .then(items => {
+                    console.log(items)
                     nameSet(items.record.name || '')
                     addressSet(items.record.address || '')
                     neighborhoodSet(items.record.neighborhood || '')
                     citySet(items.record.city || '')
                     stateSet(items.record.state || '')
                     zipSet(items.record.zip || '')
-
+                    redeveloperIdSet(items.record.reDeveloper_id || '')
+                    return items.record.reDeveloper_id
+                })
+                .then(id => {
+                    getList('redeveloperid/' + redeveloperId)
+                        .then(items => {
+                            emailSet(items.record.email || '')
+                            phoneSet(items.record.phone || '')
+                        })
                 })
         }
         setRecUpdated(true)
     }, [id, recUpdated])
+
+    useEffect(() => {
+        getList('redeveloperid/' + redeveloperId)
+            .then(items => {
+                emailSet(items.record.email || '')
+                phoneSet(items.record.phone || '')
+            })
+    }, [redeveloperId])
 
     const saveRec = () => {
         if (!name) {
@@ -69,12 +95,15 @@ const REProject = props => {
         }
         let recObj = {
             name,
+            redeveloper_id: redeveloperId,
             address,
             neighborhood,
             city,
             state,
             zip,
         }
+        console.log(recObj)
+
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
             putRec(objectId + _id, recObj)
@@ -119,6 +148,12 @@ const REProject = props => {
         setEmptyRecDialog(false)
     }
 
+
+    const handleDeveloperChange = (e) => {
+        const currentItemTemp = redeveloperList.findIndex((item) => { return item._id === e })
+        redeveloperIdSet(e)
+    }
+
     return (
         <div>
             <div className='tool-bar'>
@@ -155,6 +190,23 @@ const REProject = props => {
             </div>
             <div className='data-form'>
                 <Grid container spacing={2} >
+                    <Grid item xs={4}>
+                        <TextField
+                            id='redeveloperId'
+                            label='Incorporadora'
+                            value={redeveloperId}
+                            onChange={(event) => { redeveloperIdSet(event.target.value) }}
+                            size='small'
+                            fullWidth={true}
+                            type='text'
+                            disabled={!insertMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            select>
+                            {redeveloperList.map((option) => (
+                                <MenuItem key={option._id} value={option._id}>{option.name}</MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
                     <Grid item xs={5}>
                         <TextField
                             value={name}
@@ -236,6 +288,34 @@ const REProject = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
+                    <Grid item xs={3}>
+                        <TextField
+                            value={email}
+                            onChange={(event) => { emailSet(event.target.value) }}
+                            id='email'
+                            label='Email'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            value={phone}
+                            onChange={(event) => { phoneSet(event.target.value) }}
+                            id='phone'
+                            label='Fone'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
 
                     <Grid item xs={2}>
                         <Button color="primary" variant='contained'>
@@ -264,14 +344,32 @@ const REProject = props => {
                         </Tabs>
                     </AppBar>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
-                        {/* <REProjectMiniList
-                            mktEventId={_id}
-                            editMode={editMode}
-                            eventAddress={`${address} ${city} ${state}`}
-                            profileFrom={profileFrom}
-                            profileTo={profileTo}
-                            zip={zip}
-                        /> */}
+                        {/*             <div >
+                <DataTable
+                    // title=""
+                    noHeader={true}
+                    columns={eventColumns}
+                    customStyles={customStyles1}
+                    data={eventList}
+                    // selectableRows 
+                    // onSelectedRowsChange={handleChange}
+                    Clicked
+                    keyField={'_id'}
+                    highlightOnHover={true}
+                    pagination={true}
+                    fixedHeader={true}
+                    // noContextMenu={true}
+                    paginationComponentOptions={paginationBr}
+                    paginationPerPage={10}
+                    noDataComponent={'Nenhum registro disponível.'}
+                    onRowClicked={(row, event) => { editOpen(row._id) }}
+                    selectableRows
+                    selectableRowsHighlight
+                    onSelectedRowsChange={({ allSelected, selectedCount, selectedRows }) => {
+                        handleListChange(allSelected, selectedCount, selectedRows)
+                    }}
+                />
+            </div> */}
                     </TabPanel>
                 </div>
 

@@ -27,18 +27,25 @@ const MktEvent = props => {
     let { id } = useParams()
 
     const [_id, _idSet] = useState(id)
+
     const [name, nameSet] = useState('')
-    const [initialDate, initialDateSet] = useState('')
-    const [finalDate, finalDateSet] = useState('')
+    const [date, dateSet] = useState('')
     const [profileFrom, profileFromSet] = useState('')
     const [profileTo, profileToSet] = useState('')
+    const [reprojectId, reprojectIdSet] = useState('')
+
+    const [reprojectName, reprojectNameSet] = useState('')
     const [address, addressSet] = useState('')
     const [neighborhood, neighborhoodSet] = useState('')
     const [city, citySet] = useState('')
     const [state, stateSet] = useState('')
     const [zip, zipSet] = useState('')
+    const [redeveloperId, redeveloperIdSet] = useState('')
+
     const [email, emailSet] = useState('')
     const [phone, phoneSet] = useState('')
+
+    const [reprojectList, reprojectListSet] = useState([])
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -53,25 +60,73 @@ const MktEvent = props => {
     const classes = useStyles()
 
     useEffect(() => {
+        getList('reproject')
+            .then(items => {
+                console.log("project list", items)
+                reprojectListSet(items.record)
+            })
         if (id !== '0') {
             getList(objectId + id)
                 .then(items => {
+                    console.log(items)
                     nameSet(items.record.name || '')
-                    initialDateSet((items.record.initialDate || '').substr(0, 10))
-                    finalDateSet((items.record.finalDate || '').substr(0, 10))
+                    dateSet((items.record.initialDate || '').substr(0, 10))
                     profileFromSet(items.record.profileFrom || '')
                     profileToSet(items.record.profileTo || '')
+                    reprojectIdSet(items.record.reproject_id || '')
+                    return items.record.reproject_id;
+                })
+                .then(id => {
+                    getList('reprojectid/' + id)
+                        .then(items => {
+                            console.log(items)
+                            reprojectNameSet(items.record.name || '')
+                            addressSet(items.record.address || '')
+                            neighborhoodSet(items.record.neighborhood || '')
+                            citySet(items.record.city || '')
+                            stateSet(items.record.state || '')
+                            zipSet(items.record.zip || '')
+                            redeveloperIdSet(items.record.redeveloper_id || '')
+                            return items.record.redeveloper_id
+                        })
+                })
+                .then(id => {
+                    getList('redeveloperid/' + id)
+                        .then(items => {
+                            emailSet(items.record.email || '')
+                            phoneSet(items.record.phone || '')
+                        })
+                })
+
+        }
+        setRecUpdated(true)
+    }, [id, recUpdated])
+
+    useEffect(() => {
+        if (reprojectId) {
+            getList('reprojectid/' + reprojectId)
+                .then(items => {
+                    console.log(items)
+                    reprojectNameSet(items.record.name || '')
                     addressSet(items.record.address || '')
                     neighborhoodSet(items.record.neighborhood || '')
                     citySet(items.record.city || '')
                     stateSet(items.record.state || '')
                     zipSet(items.record.zip || '')
+                    redeveloperIdSet(items.record.redeveloper_id || '')
+                })
+        }
+    }, [reprojectId])
+
+    useEffect(() => {
+        if (reprojectId) {
+            getList('redeveloperid/' + redeveloperId)
+                .then(items => {
                     emailSet(items.record.email || '')
                     phoneSet(items.record.phone || '')
                 })
         }
-        setRecUpdated(true)
-    }, [id, recUpdated])
+    }, [redeveloperId])
 
     const saveRec = () => {
         if (!name) {
@@ -80,18 +135,14 @@ const MktEvent = props => {
         }
         let recObj = {
             name,
-            initialDate,
-            finalDate,
+            reproject_id: reprojectId,
+            date,
             profileFrom,
             profileTo,
-            address,
-            neighborhood,
-            city,
-            state,
-            zip,
-            email,
-            phone,
+
+
         }
+        console.log(recObj)
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
             putRec(objectId + _id, recObj)
@@ -174,8 +225,25 @@ const MktEvent = props => {
                 <Grid container spacing={2} >
                     <Grid item xs={4}>
                         <TextField
+                            id='reprojectId'
+                            label='Empreendimento'
+                            value={reprojectId}
+                            onChange={(event) => { reprojectIdSet(event.target.value) }}
+                            size='small'
+                            fullWidth={true}
+                            type='text'
+                            disabled={!insertMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            select>
+                            {reprojectList.map((option) => (
+                                <MenuItem key={option._id} value={option._id}>{option.name}</MenuItem>
+                            ))}
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
                             value={name}
-                            onChange={(event) => { nameSet(event.target.value.toUpperCase()) }}
+                            onChange={(event) => { nameSet(event.target.value) }}
                             id='name'
                             label='Nome da ação'
                             fullWidth={true}
@@ -187,24 +255,10 @@ const MktEvent = props => {
                     </Grid>
                     <Grid item xs={3}>
                         <TextField
-                            value={initialDate}
-                            onChange={(event) => { initialDateSet(event.target.value) }}
-                            id='initialDate'
-                            label='Data Inicial'
-                            fullWidth={true}
-                            disabled={!editMode}
-                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                            variant='outlined'
-                            size='small'
-                            inputProps={{ type: 'date' }}
-                        />
-                    </Grid>
-                    <Grid item xs={3}>
-                        <TextField
-                            value={finalDate}
-                            onChange={(event) => { finalDateSet(event.target.value) }}
-                            id='finalDate'
-                            label='Data Final'
+                            value={date}
+                            onChange={(event) => { dateSet(event.target.value) }}
+                            id='date'
+                            label='Data'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}

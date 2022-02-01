@@ -51,7 +51,6 @@ const EventLocationList = props => {
             cell: row => {return regionPerCEP(row.location_zip)}
 
         },
-
         {
             name: 'Perfil',
             selector: row => row.location_profile,

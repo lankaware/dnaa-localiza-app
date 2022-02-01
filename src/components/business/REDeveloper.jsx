@@ -39,6 +39,10 @@ const REDeveloper = props => {
     const [emptyRecDialog, setEmptyRecDialog] = useState(false)
     const [recUpdated, setRecUpdated] = useState(true)
 
+    const [projectList, projectListSet] = useState([])
+    const [eventList, eventListSet] = useState([])
+
+
     const [tabValue, setTabValue] = useState(0);
 
     const classes = useStyles()
@@ -55,6 +59,14 @@ const REDeveloper = props => {
         }
         setRecUpdated(true)
     }, [id, recUpdated])
+
+    useEffect(() => {
+        getList('reproject/')
+          .then(items => {
+            console.log('items.record', items.record)
+            projectListSet(items.record)
+          })
+      }, [])
 
     const saveRec = () => {
         if (!name) {
@@ -173,8 +185,8 @@ const REDeveloper = props => {
                             size='small'
                         />
                     </Grid>
-                    
- 
+
+
                     <Grid item xs={5}>
                         <TextField
                             value={email}
@@ -204,9 +216,9 @@ const REDeveloper = props => {
                         />
                     </Grid>
                     <Grid item xs={4}>
-                    <Button color="primary" variant='contained'>
-                        Gerar Recibo
-                    </Button>
+                        <Button color="primary" variant='contained'>
+                            Gerar Recibo
+                        </Button>
                     </Grid>
 
 
@@ -231,24 +243,60 @@ const REDeveloper = props => {
                         </Tabs>
                     </AppBar>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
-                        {/* <REProjectMiniList
-                            mktEventId={_id}
-                            editMode={editMode}
-                            eventAddress={`${address} ${city} ${state}`}
-                            profileFrom={profileFrom}
-                            profileTo={profileTo}
-                            zip={zip}
-                        /> */}
+                        {/* <div >
+                            <DataTable
+                                // title=""
+                                noHeader={true}
+                                columns={projectColumns}
+                                customStyles={customStyles1}
+                                data={projectList}
+                                // selectableRows 
+                                // onSelectedRowsChange={handleChange}
+                                Clicked
+                                keyField={'_id'}
+                                highlightOnHover={true}
+                                pagination={true}
+                                fixedHeader={true}
+                                // noContextMenu={true}
+                                paginationComponentOptions={paginationBr}
+                                paginationPerPage={10}
+                                noDataComponent={'Nenhum registro disponível.'}
+                                onRowClicked={(row, event) => { editOpen(row._id) }}
+                                selectableRows
+                                selectableRowsHighlight
+                                onSelectedRowsChange={({ allSelected, selectedCount, selectedRows }) => {
+                                    handleListChange(allSelected, selectedCount, selectedRows)
+                                }}
+                            />
+                        </div> */}
                     </TabPanel>
                     <TabPanel value={tabValue} index={1} dir={theme.direction}>
-                        {/* <REProjectMiniList
-                            mktEventId={_id}
-                            editMode={editMode}
-                            eventAddress={`${address} ${city} ${state}`}
-                            profileFrom={profileFrom}
-                            profileTo={profileTo}
-                            zip={zip}
-                        /> */}
+                        {/* <div >
+                            <DataTable
+                                // title=""
+                                noHeader={true}
+                                columns={eventColumns}
+                                customStyles={customStyles1}
+                                data={eventList}
+                                // selectableRows 
+                                // onSelectedRowsChange={handleChange}
+                                Clicked
+                                keyField={'_id'}
+                                highlightOnHover={true}
+                                pagination={true}
+                                fixedHeader={true}
+                                // noContextMenu={true}
+                                paginationComponentOptions={paginationBr}
+                                paginationPerPage={10}
+                                noDataComponent={'Nenhum registro disponível.'}
+                                onRowClicked={(row, event) => { editOpen(row._id) }}
+                                selectableRows
+                                selectableRowsHighlight
+                                onSelectedRowsChange={({ allSelected, selectedCount, selectedRows }) => {
+                                    handleListChange(allSelected, selectedCount, selectedRows)
+                                }}
+                            />
+                        </div> */}
                     </TabPanel>
                 </div>
 
