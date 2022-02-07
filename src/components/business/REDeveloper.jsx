@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Form } from 'reactstrap';
+import DataTable from 'react-data-table-component'
 import {
-    Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
+    Grid, TextField, Typography, Button, Link, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
     AppBar, Tabs, Tab, MenuItem
 } from '@mui/material'
 
@@ -22,6 +23,24 @@ const objectRef = 'redeveloper/'
 const objectId = 'redeveloperid/'
 
 const REDeveloper = props => {
+
+    const projectColumns = [
+        {
+            name: 'Nome',
+            selector: row => row.name,
+            sortable: true,
+            width: '20vw',
+            cell: row => (<Link href={"/reproject/" + row._id} >{row.name}</Link>)
+        },
+        {
+            name: 'Endereço',
+            selector: row => row.address,
+            sortable: true,
+            width: '20vw',
+        },
+
+    ];
+
 
     let { id } = useParams()
 
@@ -49,24 +68,23 @@ const REDeveloper = props => {
 
     useEffect(() => {
         if (id !== '0') {
-            getList(objectId + id)
+            getList(objectId + _id)
                 .then(items => {
                     nameSet(items.record.name || '')
                     tradeNameSet(items.record.name || '')
                     emailSet(items.record.email || '')
                     phoneSet(items.record.phone || '')
+
+                })
+            getList('reprojectperdeveloper/' + _id)
+                .then(items => {
+                    console.log('items.record', items.record)
+                    projectListSet(items.record)
                 })
         }
         setRecUpdated(true)
     }, [id, recUpdated])
 
-    useEffect(() => {
-        getList('reproject/')
-          .then(items => {
-            console.log('items.record', items.record)
-            projectListSet(items.record)
-          })
-      }, [])
 
     const saveRec = () => {
         if (!name) {
@@ -243,32 +261,32 @@ const REDeveloper = props => {
                         </Tabs>
                     </AppBar>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
-                        {/* <div >
+                        <div >
                             <DataTable
                                 // title=""
                                 noHeader={true}
                                 columns={projectColumns}
-                                customStyles={customStyles1}
+                                // customStyles={customStyles1}
                                 data={projectList}
                                 // selectableRows 
                                 // onSelectedRowsChange={handleChange}
                                 Clicked
                                 keyField={'_id'}
                                 highlightOnHover={true}
-                                pagination={true}
+                                // pagination={true}
                                 fixedHeader={true}
                                 // noContextMenu={true}
-                                paginationComponentOptions={paginationBr}
+                                // paginationComponentOptions={paginationBr}
                                 paginationPerPage={10}
                                 noDataComponent={'Nenhum registro disponível.'}
-                                onRowClicked={(row, event) => { editOpen(row._id) }}
-                                selectableRows
-                                selectableRowsHighlight
-                                onSelectedRowsChange={({ allSelected, selectedCount, selectedRows }) => {
-                                    handleListChange(allSelected, selectedCount, selectedRows)
-                                }}
+                            // onRowClicked={(row, event) => { editOpen(row._id) }}
+                            // selectableRows
+                            // selectableRowsHighlight
+                            // onSelectedRowsChange={({ allSelected, selectedCount, selectedRows }) => {
+                            //     handleListChange(allSelected, selectedCount, selectedRows)
+                            // }}
                             />
-                        </div> */}
+                        </div>
                     </TabPanel>
                     <TabPanel value={tabValue} index={1} dir={theme.direction}>
                         {/* <div >

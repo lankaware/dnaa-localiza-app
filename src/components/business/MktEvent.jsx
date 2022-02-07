@@ -62,39 +62,43 @@ const MktEvent = props => {
     useEffect(() => {
         getList('reproject')
             .then(items => {
-                console.log("project list", items)
                 reprojectListSet(items.record)
             })
         if (id !== '0') {
             getList(objectId + id)
                 .then(items => {
-                    console.log(items)
+                    console.log(id, items)
                     nameSet(items.record.name || '')
                     dateSet((items.record.initialDate || '').substr(0, 10))
                     profileFromSet(items.record.profileFrom || '')
                     profileToSet(items.record.profileTo || '')
                     reprojectIdSet(items.record.reproject_id || '')
+                    console.log(items.record.reproject_id)
                     return items.record.reproject_id;
                 })
                 .then(id => {
+                    console.log("id", id)
+                    if (!id) return null
                     getList('reprojectid/' + id)
                         .then(items => {
-                            console.log(items)
+                            console.log("id and items", id, items)
                             reprojectNameSet(items.record.name || '')
                             addressSet(items.record.address || '')
                             neighborhoodSet(items.record.neighborhood || '')
                             citySet(items.record.city || '')
                             stateSet(items.record.state || '')
                             zipSet(items.record.zip || '')
-                            redeveloperIdSet(items.record.redeveloper_id || '')
-                            return items.record.redeveloper_id
+                            redeveloperIdSet(items.record.reDeveloper_id || '')
+                            return items.record.reDeveloper_id
                         })
-                })
-                .then(id => {
-                    getList('redeveloperid/' + id)
-                        .then(items => {
-                            emailSet(items.record.email || '')
-                            phoneSet(items.record.phone || '')
+                        .then(id => {
+                            if (!id) return null
+                            getList('redeveloperid/' + id)
+                                .then(items => {
+                                    console.log(id, items)
+                                    emailSet(items.record.email || '')
+                                    phoneSet(items.record.phone || '')
+                                })
                         })
                 })
 
@@ -103,29 +107,34 @@ const MktEvent = props => {
     }, [id, recUpdated])
 
     useEffect(() => {
-        if (reprojectId) {
-            getList('reprojectid/' + reprojectId)
-                .then(items => {
-                    console.log(items)
-                    reprojectNameSet(items.record.name || '')
-                    addressSet(items.record.address || '')
-                    neighborhoodSet(items.record.neighborhood || '')
-                    citySet(items.record.city || '')
-                    stateSet(items.record.state || '')
-                    zipSet(items.record.zip || '')
-                    redeveloperIdSet(items.record.redeveloper_id || '')
-                })
-        }
+        console.log("reprojectId", reprojectId)
+        getList('reprojectid/' + reprojectId)
+            .then(items => {
+                console.log("Itens", items)
+                reprojectNameSet(items.record.name || '')
+                addressSet(items.record.address || '')
+                neighborhoodSet(items.record.neighborhood || '')
+                citySet(items.record.city || '')
+                stateSet(items.record.state || '')
+                zipSet(items.record.zip || '')
+                redeveloperIdSet(items.record.reDeveloper_id || '')
+            })
+            .then(id => {
+                if (!id) return null
+                getList('redeveloperid/' + id)
+                    .then(items => {
+                        emailSet(items.record.email || '')
+                        phoneSet(items.record.phone || '')
+                    })
+            })
     }, [reprojectId])
 
     useEffect(() => {
-        if (reprojectId) {
-            getList('redeveloperid/' + redeveloperId)
-                .then(items => {
-                    emailSet(items.record.email || '')
-                    phoneSet(items.record.phone || '')
-                })
-        }
+        getList('redeveloperid/' + redeveloperId)
+            .then(items => {
+                emailSet(items.record.email || '')
+                phoneSet(items.record.phone || '')
+            })
     }, [redeveloperId])
 
     const saveRec = () => {

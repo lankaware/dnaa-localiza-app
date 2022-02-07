@@ -34,10 +34,10 @@ const AppMenu = props => {
                         </DropdownToggle>
                         <DropdownMenu className='menu-item'>
                             {/* <DropdownMenu>  */}
-                            <DropdownItem className='menu-item' href="/mkteventlist">Ações Promocionais</DropdownItem>
-                            <DropdownItem className='menu-item' href="/locationlist">Pontos fixos</DropdownItem>
                             <DropdownItem className='menu-item' href="/redeveloperlist">Incorporadoras</DropdownItem>
                             <DropdownItem className='menu-item' href="/reprojectlist">Empreendimentos</DropdownItem>
+                            <DropdownItem className='menu-item' href="/mkteventlist">Ações Promocionais</DropdownItem>
+                            <DropdownItem className='menu-item' href="/locationlist">Pontos fixos</DropdownItem>
 
                         </DropdownMenu>
                     </UncontrolledDropdown>

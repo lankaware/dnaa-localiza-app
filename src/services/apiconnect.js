@@ -1,5 +1,5 @@
-export const apiURI = 'http://localhost:8090/'
-// export const apiURI = process.env.REACT_APP_APIURL.trim()
+// export const apiURI = 'http://localhost:8090/'
+export const apiURI = process.env.REACT_APP_APIURL.trim()
 
 export async function getList(apiDesc) {
   return fetch(apiURI + apiDesc,

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Form } from 'reactstrap';
+import DataTable from 'react-data-table-component'
 import {
-    Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
+    Grid, TextField, Typography, Link, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
     AppBar, Tabs, Tab, MenuItem
 } from '@mui/material'
 
@@ -17,11 +18,29 @@ import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
 import TabPanel, { posTab } from '../commons/TabPanel'
 import { theme } from '../../services/customtheme'
 
+import { prettyDate } from '../../services/dateutils'
 
 const objectRef = 'reproject/'
 const objectId = 'reprojectid/'
 
 const REProject = props => {
+
+    const eventColumns = [
+        {
+            name: 'Nome',
+            selector: row => row.name,
+            sortable: true,
+            width: '20vw',
+            cell: row => (<Link href={"/mktevent/" + row._id} >{row.name}</Link>)
+        },
+        {
+            name: 'Data',
+            selector: row => prettyDate(row.date),
+            sortable: true,
+            width: '20vw',
+        },
+
+    ];
 
     let { id } = useParams()
 
@@ -38,6 +57,7 @@ const REProject = props => {
     const [phone, phoneSet] = useState('')
 
     const [redeveloperList, redeveloperListSet] = useState([])
+    const [eventList, eventListSet] = useState([]);
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -50,6 +70,8 @@ const REProject = props => {
     const [tabValue, setTabValue] = useState(0);
 
     const classes = useStyles()
+
+
 
     useEffect(() => {
         getList('redeveloper')
@@ -70,11 +92,17 @@ const REProject = props => {
                     return items.record.reDeveloper_id
                 })
                 .then(id => {
+                    if (!id) return null
                     getList('redeveloperid/' + redeveloperId)
                         .then(items => {
                             emailSet(items.record.email || '')
                             phoneSet(items.record.phone || '')
                         })
+                })
+
+            getList('mkteventperproject/' + _id)
+                .then(items => {
+                    eventListSet(items.record)
                 })
         }
         setRecUpdated(true)
@@ -95,7 +123,7 @@ const REProject = props => {
         }
         let recObj = {
             name,
-            redeveloper_id: redeveloperId,
+            reDeveloper_id: redeveloperId,
             address,
             neighborhood,
             city,
@@ -149,10 +177,10 @@ const REProject = props => {
     }
 
 
-    const handleDeveloperChange = (e) => {
-        const currentItemTemp = redeveloperList.findIndex((item) => { return item._id === e })
-        redeveloperIdSet(e)
-    }
+    // const handleDeveloperChange = (e) => {
+    //     const currentItemTemp = redeveloperList.findIndex((item) => { return item._id === e })
+    //     redeveloperIdSet(e)
+    // }
 
     return (
         <div>
@@ -344,32 +372,32 @@ const REProject = props => {
                         </Tabs>
                     </AppBar>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
-                        {/*             <div >
-                <DataTable
-                    // title=""
-                    noHeader={true}
-                    columns={eventColumns}
-                    customStyles={customStyles1}
-                    data={eventList}
-                    // selectableRows 
-                    // onSelectedRowsChange={handleChange}
-                    Clicked
-                    keyField={'_id'}
-                    highlightOnHover={true}
-                    pagination={true}
-                    fixedHeader={true}
-                    // noContextMenu={true}
-                    paginationComponentOptions={paginationBr}
-                    paginationPerPage={10}
-                    noDataComponent={'Nenhum registro disponível.'}
-                    onRowClicked={(row, event) => { editOpen(row._id) }}
-                    selectableRows
-                    selectableRowsHighlight
-                    onSelectedRowsChange={({ allSelected, selectedCount, selectedRows }) => {
-                        handleListChange(allSelected, selectedCount, selectedRows)
-                    }}
-                />
-            </div> */}
+                        <div >
+                            <DataTable
+                                // title=""
+                                noHeader={true}
+                                columns={eventColumns}
+                                // customStyles={customStyles1}
+                                data={eventList}
+                                // selectableRows 
+                                // onSelectedRowsChange={handleChange}
+                                Clicked
+                                keyField={'_id'}
+                                highlightOnHover={true}
+                                // pagination={true}
+                                fixedHeader={true}
+                                // noContextMenu={true}
+                                // paginationComponentOptions={paginationBr}
+                                paginationPerPage={10}
+                                noDataComponent={'Nenhum registro disponível.'}
+                            // onRowClicked={(row, event) => { editOpen(row._id) }}
+                            // selectableRows
+                            // selectableRowsHighlight
+                            // onSelectedRowsChange={({ allSelected, selectedCount, selectedRows }) => {
+                            //     handleListChange(allSelected, selectedCount, selectedRows)
+                            // }}
+                            />
+                        </div>
                     </TabPanel>
                 </div>
 
