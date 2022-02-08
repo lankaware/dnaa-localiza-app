@@ -18,6 +18,7 @@ import { customStyles1, paginationBr } from '../../services/datatablestyle'
 const objectRef = 'eventlocation/'
 const objectId = 'eventlocationid/'
 const objectChild = 'eventlocationevent/'
+const objectPrevious = "mkteventprevious/"
 
 var currentItem = '0'
 var address = ''
@@ -48,7 +49,7 @@ const EventLocationList = props => {
             selector: row => row.location_zip,
             sortable: true,
             width: '20vw',
-            cell: row => {return regionPerCEP(row.location_zip)}
+            cell: row => {return row.location_zip}
 
         },
         {
@@ -138,6 +139,16 @@ const EventLocationList = props => {
         setAppUpdate(true)
     }, [mktEventId, appUpdate])
 
+    useEffect(() => {
+        if (mktEventId === '0') {
+            getList(objectPrevious + props.reprojectId)
+                .then(items => {
+                    console.log("previous items", items)
+                    if (items) setList(items.record)
+                })
+        }
+    }, [props.reprojectId])
+
     const editOpen = (rowid) => {
         if (rowid !== '0') {
             getList(`${objectId}${rowid}`)
@@ -218,6 +229,9 @@ const EventLocationList = props => {
         } else {
             recObj = JSON.stringify(recObj);
             postRec(objectRef, recObj)
+            // .then((res) => {
+            //     res.record._id
+            // })
         }
         setAppUpdate(false)
         editDialogSet(false)
