@@ -12,6 +12,8 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import CancelIcon from '@mui/icons-material/Cancel'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+
 
 import { useStyles } from '../../services/stylemui'
 import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
@@ -316,6 +318,11 @@ const REDeveloper = props => {
                             />
                         </div> */}
                     </TabPanel>
+                    <Box m={1}>
+                        <Button color="primary" size='small' color="warning" variant='contained' startIcon={<OpenInNewIcon />}
+                            href="/reproject/0">Incluir Empreendimento
+                        </Button>
+                    </Box>
                 </div>
 
             </Form>

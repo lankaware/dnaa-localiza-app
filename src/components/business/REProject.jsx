@@ -12,6 +12,8 @@ import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import CancelIcon from '@mui/icons-material/Cancel'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+
 
 import { useStyles } from '../../services/stylemui'
 import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
@@ -218,7 +220,7 @@ const REProject = props => {
             </div>
             <div className='data-form'>
                 <Grid container spacing={2} >
-                    <Grid item xs={4}>
+                    <Grid item xs={5}>
                         <TextField
                             id='redeveloperId'
                             label='Incorporadora'
@@ -235,7 +237,7 @@ const REProject = props => {
                             ))}
                         </TextField>
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                         <TextField
                             value={name}
                             onChange={(event) => { nameSet(event.target.value) }}
@@ -288,7 +290,10 @@ const REProject = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={1}>
+
+                    </Grid>
+                    <Grid item xs={1}>
                         <TextField
                             value={state}
                             onChange={(event) => { stateSet(event.target.value) }}
@@ -316,7 +321,7 @@ const REProject = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                         <TextField
                             value={email}
                             onChange={(event) => { emailSet(event.target.value) }}
@@ -399,6 +404,11 @@ const REProject = props => {
                             />
                         </div>
                     </TabPanel>
+                    <Box m={1}>
+                        <Button color="primary" color="warning" size='small' variant='contained' startIcon={<OpenInNewIcon />}
+                            href="/mktevent/0">INCLUIR Ação
+                        </Button>
+                    </Box>
                 </div>
 
             </Form>

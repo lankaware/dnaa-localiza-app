@@ -24,20 +24,20 @@ const CustomerList = props => {
             width: '30vw',
             cell: row => (<Link to={"/mktevent/" + row._id}>{row.name}</Link>)
         },
-        {
-            name: 'Data Inicial',
-            selector: row => row.initialDate,
-            sortable: true,
-            width: '10vw',
-            cell: row => (<div>{dateBr(row.initialDate)}</div>)
-        },
-        {
-            name: 'Data Final',
-            selector: row => row.finalDate,
-            sortable: true,
-            width: '10vw',
-            cell: row => (<div>{dateBr(row.finalDate)}</div>)
-        },
+        // {
+        //     name: 'Data Inicial',
+        //     selector: row => row.initialDate,
+        //     sortable: true,
+        //     width: '10vw',
+        //     cell: row => (<div>{dateBr(row.initialDate)}</div>)
+        // },
+        // {
+        //     name: 'Data Final',
+        //     selector: row => row.finalDate,
+        //     sortable: true,
+        //     width: '10vw',
+        //     cell: row => (<div>{dateBr(row.finalDate)}</div>)
+        // },
     ];
 
     const classes = useStyles();

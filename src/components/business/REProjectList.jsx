@@ -23,6 +23,13 @@ const REProjectList = (props) => {
       width: '30vw',
       cell: row => (<Link to={"/reproject/" + row._id}>{row.name}</Link>)
     },
+    {
+      name: 'Endereço',
+      selector: row => row.address,
+      sortable: true,
+      width: '30vw',
+    },
+
   ]; const classes = useStyles();
   const [list, setList] = useState([])
   const [nameFilter, nameFilterSet] = useState('')
