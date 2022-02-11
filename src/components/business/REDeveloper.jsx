@@ -19,6 +19,7 @@ import { useStyles } from '../../services/stylemui'
 import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
 import TabPanel, { posTab } from '../commons/TabPanel'
 import { theme } from '../../services/customtheme'
+import { dateBr } from '../../services/dateutils'
 
 
 const objectRef = 'redeveloper/'
@@ -41,6 +42,24 @@ const REDeveloper = props => {
             width: '20vw',
         },
 
+    ];
+
+    const eventColumns = [
+        {
+            name: 'Nome da Ação',
+            selector: row => row.name,
+            sortable: true,
+            width: '30vw',
+            cell: row => (<Link href={"/mktevent/" + row._id}>{row.name}</Link>)
+        },
+        {
+            name: 'Data',
+            selector: row => row.date,
+            sortable: true,
+            width: '10vw',
+            cell: row => (<div>{dateBr(row.date)}</div>)
+        },
+    
     ];
 
 
@@ -83,7 +102,13 @@ const REDeveloper = props => {
                     console.log('items.record', items.record)
                     projectListSet(items.record)
                 })
+                getList('mkteventperdeveloper/' + _id)
+                .then(items => {
+                    console.log('items.record', items.record)
+                    eventListSet(items.record)
+                })
         }
+        
         setRecUpdated(true)
     }, [id, recUpdated])
 
@@ -291,32 +316,32 @@ const REDeveloper = props => {
                         </div>
                     </TabPanel>
                     <TabPanel value={tabValue} index={1} dir={theme.direction}>
-                        {/* <div >
-                            <DataTable
+                        <div >
+                        <DataTable
                                 // title=""
                                 noHeader={true}
                                 columns={eventColumns}
-                                customStyles={customStyles1}
+                                // customStyles={customStyles1}
                                 data={eventList}
                                 // selectableRows 
                                 // onSelectedRowsChange={handleChange}
                                 Clicked
                                 keyField={'_id'}
                                 highlightOnHover={true}
-                                pagination={true}
+                                // pagination={true}
                                 fixedHeader={true}
                                 // noContextMenu={true}
-                                paginationComponentOptions={paginationBr}
+                                // paginationComponentOptions={paginationBr}
                                 paginationPerPage={10}
                                 noDataComponent={'Nenhum registro disponível.'}
-                                onRowClicked={(row, event) => { editOpen(row._id) }}
-                                selectableRows
-                                selectableRowsHighlight
-                                onSelectedRowsChange={({ allSelected, selectedCount, selectedRows }) => {
-                                    handleListChange(allSelected, selectedCount, selectedRows)
-                                }}
+                            // onRowClicked={(row, event) => { editOpen(row._id) }}
+                            // selectableRows
+                            // selectableRowsHighlight
+                            // onSelectedRowsChange={({ allSelected, selectedCount, selectedRows }) => {
+                            //     handleListChange(allSelected, selectedCount, selectedRows)
+                            // }}
                             />
-                        </div> */}
+                        </div>
                     </TabPanel>
                     <Box m={1}>
                         <Button color="primary" size='small' color="warning" variant='contained' startIcon={<OpenInNewIcon />}

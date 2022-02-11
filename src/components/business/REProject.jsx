@@ -81,9 +81,9 @@ const REProject = props => {
                 redeveloperListSet(items.record)
             })
         if (id !== '0') {
-            getList(objectId + id)
+            getList(objectId + _id)
                 .then(items => {
-                    console.log(items)
+                    console.log("reproject", items)
                     nameSet(items.record.name || '')
                     addressSet(items.record.address || '')
                     neighborhoodSet(items.record.neighborhood || '')

@@ -49,7 +49,7 @@ const EventLocationList = props => {
             selector: row => row.location_zip,
             sortable: true,
             width: '20vw',
-            cell: row => {return row.location_zip}
+            cell: row => {return regionPerCEP(row.location_zip)}
 
         },
         {

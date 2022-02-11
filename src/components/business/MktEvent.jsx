@@ -137,6 +137,14 @@ const MktEvent = props => {
             })
     }, [redeveloperId])
 
+    useEffect(() => {
+        getList('redeveloperid/' + redeveloperId)
+            .then(items => {
+                emailSet(items.record.email || '')
+                phoneSet(items.record.phone || '')
+            })
+    }, [_id])
+
     const saveRec = () => {
         if (!name) {
             setEmptyRecDialog(true)
@@ -160,6 +168,8 @@ const MktEvent = props => {
             postRec(objectRef, recObj)
                 .then(result => {
                     _idSet(result.record._id)
+                    if (reprojectId != 0)
+                        getList("mkteventprevious/" + reprojectId + "/" + result.record._id).then((record) => console.log(record))
                 })
         }
         setEditMode(false)
