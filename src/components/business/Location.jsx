@@ -16,6 +16,7 @@ import { useStyles } from '../../services/stylemui'
 import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
 import TabPanel, { posTab } from '../commons/TabPanel'
 import { theme } from '../../services/customtheme'
+import { prettyDate } from '../../services/dateutils'
 
 const objectRef = 'location/'
 const objectId = 'locationid/'
@@ -24,19 +25,32 @@ const Location = props => {
 
     let { id } = useParams()
 
+    const [type, typeSet] = useState('')
     const [_id, _idSet] = useState(id)
     const [name, nameSet] = useState('')
     const [profile, profileSet] = useState('')
+    const [addressType, addressTypeSet] = useState('')
     const [address, addressSet] = useState('')
+    const [number, numberSet] = useState('')
     const [neighborhood, neighborhoodSet] = useState('')
     const [city, citySet] = useState('')
     const [state, stateSet] = useState('')
     const [zip, zipSet] = useState('')
-    const [email, emailSet] = useState('')
-    const [phone, phoneSet] = useState('')
     const [contactPreference, contactPreferenceSet] = useState('')
+    const [email, emailSet] = useState('')
+    const [phoneContact, phoneContactSet] = useState('')
+    const [phone, phoneSet] = useState('')
+    const [whats, whatsSet] = useState('')
     const [photo, photoSet] = useState('')
     const [disponibility, disponibilitySet] = useState('')
+    const [occupied, occupiedSet] = useState('')
+    const [operatingHours, operatingHoursSet] = useState('')
+    const [capacity, capacitySet] = useState('')
+    const [dayValue, dayValueSet] = useState('')
+    const [weekendValue, weekendValueSet] = useState('')
+    const [fifteenValue, fifteenValueSet] = useState('')
+    const [monthValue, monthValueSet] = useState('')
+    const [lastUpdated, lastUpdatedSet] = useState('')
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -54,19 +68,32 @@ const Location = props => {
         if (id !== '0') {
             getList(objectId + id)
                 .then(items => {
-                    // _idSet(items)
+                    typeSet(items.record.type || '')
                     nameSet(items.record.name || '')
                     profileSet(items.record.profile || '')
+                    addressTypeSet(items.record.addressType || '')
                     addressSet(items.record.address || '')
+                    numberSet(items.record.number || '')
                     neighborhoodSet(items.record.neighborhood || '')
                     citySet(items.record.city || '')
                     stateSet(items.record.state || '')
                     zipSet(items.record.zip || '')
-                    emailSet(items.record.email || '')
-                    phoneSet(items.record.phone || '')
                     contactPreferenceSet(items.record.contactPreference || '')
+                    emailSet(items.record.email || '')
+                    phoneContactSet(items.record.phoneContact || '')
+                    phoneSet(items.record.phone || '')
+                    whatsSet(items.record.whats || '')
                     photoSet(items.record.photo || '')
                     disponibilitySet(items.record.disponibility || '')
+                    occupiedSet(items.record.occupied || '')
+                    operatingHoursSet(items.record.operatingHours || '')
+                    capacitySet(items.record.capacity || '')
+                    dayValueSet(items.record.dayValue || '')
+                    weekendValueSet(items.record.weekendValue || '')
+                    fifteenValueSet(items.record.fifteenValue || '')
+                    monthValueSet(items.record.monthValue || '')
+                    lastUpdatedSet(prettyDate(items.record.updatedAt) || '')
+
                 })
         }
         setRecUpdated(true)
@@ -78,18 +105,29 @@ const Location = props => {
             return null
         }
         let recObj = {
+            type,
             name,
             profile,
+            addressType,
             address,
+            number,
             neighborhood,
             city,
             state,
             zip,
-            email,
-            phone,
             contactPreference,
+            email,
+            phoneContact,
+            phone,
+            whats,
             photo,
             disponibility,
+            operatingHours,
+            capacity,
+            dayValue,
+            weekendValue,
+            fifteenValue,
+            monthValue,
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
@@ -143,34 +181,47 @@ const Location = props => {
                 </div>
                 <div className='tool-buttons'>
                     <Box m={1}>
-                    <Button color='primary' variant='contained' size='small' startIcon={<EditIcon />}
-                        onClick={_ => setEditMode(true)} disabled={editMode}>EDITAR
-                    </Button>
+                        <Button color='primary' variant='contained' size='small' startIcon={<EditIcon />}
+                            onClick={_ => setEditMode(true)} disabled={editMode}>EDITAR
+                        </Button>
                     </Box>
                     <Box m={1}>
-                    <Button color='primary' variant='contained' size='small' startIcon={<SaveAltIcon />}
-                        onClick={_ => saveRec()} disabled={!editMode}>SALVAR
-                    </Button>
+                        <Button color='primary' variant='contained' size='small' startIcon={<SaveAltIcon />}
+                            onClick={_ => saveRec()} disabled={!editMode}>SALVAR
+                        </Button>
                     </Box>
                     <Box m={1}>
-                    <Button color='primary' variant='contained' size='small' startIcon={<CancelIcon />}
-                        onClick={_ => refreshRec()} disabled={!editMode}>CANCELAR
-                    </Button>
+                        <Button color='primary' variant='contained' size='small' startIcon={<CancelIcon />}
+                            onClick={_ => refreshRec()} disabled={!editMode}>CANCELAR
+                        </Button>
                     </Box>
                     <Box m={1}>
-                    <Button color='primary' variant='contained' size='small' startIcon={<DeleteForeverIcon />}
-                        onClick={_ => delRec()} disabled={editMode}>APAGAR
-                    </Button>
+                        <Button color='primary' variant='contained' size='small' startIcon={<DeleteForeverIcon />}
+                            onClick={_ => delRec()} disabled={editMode}>APAGAR
+                        </Button>
                     </Box>
                     <Box m={1}>
-                    <Button color='primary' variant='contained' size='small' startIcon={<KeyboardReturnIcon />}
-                        href="/locationList" id='backButton' disabled={editMode}>LISTA
-                    </Button>
+                        <Button color='primary' variant='contained' size='small' startIcon={<KeyboardReturnIcon />}
+                            href="/locationList" id='backButton' disabled={editMode}>LISTA
+                        </Button>
                     </Box>
                 </div>
             </div>
             <div className='data-form'>
                 <Grid container spacing={2} >
+                    <Grid item xs={2}>
+                        <TextField
+                            value={type}
+                            onChange={(event) => { typeSet(event.target.value) }}
+                            id='type'
+                            label='Tipo do Local'
+                            fullWidth={true}
+                            disabled={!insertMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        />
+                    </Grid>
                     <Grid item xs={4}>
                         <TextField
                             value={name}
@@ -184,13 +235,12 @@ const Location = props => {
                             size='small'
                         />
                     </Grid>
-
-                    <Grid item xs={4}>
+                    <Grid item xs={2}>
                         <TextField
-                            value={address}
-                            onChange={(event) => { addressSet(event.target.value) }}
-                            id='adreess'
-                            label='Endereço'
+                            value={addressType}
+                            onChange={(event) => { addressTypeSet(event.target.value) }}
+                            id='addressType'
+                            label='Logradouro'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
@@ -199,6 +249,33 @@ const Location = props => {
                         />
                     </Grid>
                     <Grid item xs={3}>
+                        <TextField
+                            value={address}
+                            onChange={(event) => { addressSet(event.target.value) }}
+                            id='address'
+                            label='Endereço'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        />
+                    </Grid>
+                    <Grid item xs={1}>
+                        <TextField
+                            value={number}
+                            onChange={(event) => { numberSet(event.target.value) }}
+                            id='number'
+                            label='Número'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                            inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
                         <TextField
                             value={neighborhood}
                             onChange={(event) => { neighborhoodSet(event.target.value) }}
@@ -211,7 +288,7 @@ const Location = props => {
                             size='small'
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                         <TextField
                             value={city}
                             onChange={(event) => { citySet(event.target.value) }}
@@ -255,6 +332,39 @@ const Location = props => {
                     </Grid>
                     <Grid item xs={3}>
                         <TextField
+                            value={phoneContact}
+                            onChange={(event) => { phoneContactSet(event.target.value) }}
+                            id='phoneContact'
+                            label='Responsável do contato'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            id='contactPreference'
+                            label='Contato Preferencial'
+                            value={contactPreference}
+                            onChange={(event) => { contactPreferenceSet(event.target.value) }}
+                            size='small'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            type='text'
+                            variant='outlined'
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            select>
+                            <MenuItem key={0} value={'whatsapp'}>{'whatsapp'}</MenuItem>
+                            <MenuItem key={1} value={'email'}>{'email'}</MenuItem>
+                            <MenuItem key={1} value={'telefone'}>{'telefone'}</MenuItem>
+                            <MenuItem key={1} value={'pessoalmente'}>{'pessoalmente'}</MenuItem>
+                        </TextField>
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
                             value={email}
                             onChange={(event) => { emailSet(event.target.value) }}
                             id='email'
@@ -272,7 +382,7 @@ const Location = props => {
                             value={phone}
                             onChange={(event) => { phoneSet(event.target.value) }}
                             id='phone'
-                            label='Fone'
+                            label='Telefone Fixo'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
@@ -281,24 +391,47 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                         <TextField
-                            id='contactPreference'
-                            label='Contato Preferencial'
-                            value={contactPreference}
-                            onChange={(event) => { contactPreferenceSet(event.target.value) }}
-                            size='small'
+                            value={whats}
+                            onChange={(event) => { whatsSet(event.target.value) }}
+                            id='whats'
+                            label='Whatsapp'
                             fullWidth={true}
                             disabled={!editMode}
-                            type='text'
-                            variant='outlined'
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                            select>
-                            <MenuItem key={0} value={'whatsapp'}>{'whatsapp'}</MenuItem>
-                            <MenuItem key={1} value={'email'}>{'email'}</MenuItem>
-                            <MenuItem key={1} value={'telefone'}>{'telefone'}</MenuItem>
-                            <MenuItem key={1} value={'pessoalmente'}>{'pessoalmente'}</MenuItem>
-                        </TextField>       
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            value={operatingHours}
+                            onChange={(event) => { operatingHoursSet(event.target.value) }}
+                            id='operatingHours'
+                            label='Horário de Funcionamento'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            value={capacity}
+                            onChange={(event) => { capacitySet(event.target.value) }}
+                            id='capacity'
+                            label='Capacidade'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
@@ -320,17 +453,104 @@ const Location = props => {
                             <MenuItem key={4} value={'5'}>{'$$$$$'}</MenuItem>
                         </TextField>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={2}>
                         <TextField
-                            value={disponibility}
-                            onChange={(event) => { disponibilitySet(event.target.value) }}
-                            id='disponibility'
-                            label='Disponibilidade Geral'
+                            value={dayValue}
+                            onChange={(event) => { dayValueSet(event.target.value) }}
+                            id='dayValue'
+                            label='Valor diária durante semana'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            value={weekendValue}
+                            onChange={(event) => { weekendValueSet(event.target.value) }}
+                            id='weekendValue'
+                            label='Valor diária final de semana'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            value={fifteenValue}
+                            onChange={(event) => { fifteenValueSet(event.target.value) }}
+                            id='fifteenValue'
+                            label='Valor Quinzenal'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            value={monthValue}
+                            onChange={(event) => { monthValueSet(event.target.value) }}
+                            id='monthValue'
+                            label='Valor Mensal'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            value={lastUpdated}
+                            id='lastUpdated'
+                            label='Última atualização'
+                            fullWidth={true}
+                            disabled={true}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={5}>
+                        <TextField
+                            value={disponibility}
+                            onChange={(event) => { disponibilitySet(event.target.value) }}
+                            id='disponibility'
+                            label='Datas Disponiveis'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                            multiline
+                            rows="2"
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={5}>
+                        <TextField
+                            value={disponibility}
+                            onChange={(event) => { disponibilitySet(event.target.value) }}
+                            id='disponibility'
+                            label='Datas Selecionadas'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                            multiline
+                            rows="2"
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>

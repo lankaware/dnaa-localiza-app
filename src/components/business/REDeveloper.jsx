@@ -69,7 +69,6 @@ const REDeveloper = props => {
     const [name, nameSet] = useState('')
     const [tradeName, tradeNameSet] = useState('')
     const [email, emailSet] = useState('')
-    const [phone, phoneSet] = useState('')
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -94,7 +93,6 @@ const REDeveloper = props => {
                     nameSet(items.record.name || '')
                     tradeNameSet(items.record.name || '')
                     emailSet(items.record.email || '')
-                    phoneSet(items.record.phone || '')
 
                 })
             getList('reprojectperdeveloper/' + _id)
@@ -122,7 +120,6 @@ const REDeveloper = props => {
             name,
             tradeName,
             email,
-            phone,
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
@@ -246,28 +243,6 @@ const REDeveloper = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
-                        <TextField
-                            value={phone}
-                            onChange={(event) => { phoneSet(event.target.value) }}
-                            id='phone'
-                            label='Fone'
-                            fullWidth={true}
-                            disabled={!editMode}
-                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                            variant='outlined'
-                            size='small'
-                        // inputProps={{ type: 'number' }}
-                        />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Button color="primary" variant='contained'>
-                            Gerar Recibo
-                        </Button>
-                    </Grid>
-
-
-
                 </Grid>
             </div>
             <Form className='data-form-level1'>
