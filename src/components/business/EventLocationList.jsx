@@ -35,20 +35,20 @@ const EventLocationList = props => {
             name: 'Nome',
             selector: row => row.location_name,
             sortable: true,
-            width: '20vw',
+            width: '15vw',
             cell: row => (<Link to={"/location/" + row.location_id} target="_blank">{row.location_name}</Link>)
         },
         {
             name: 'Endereço',
             selector: row => row.location_address,
             sortable: true,
-            width: '20vw',
+            width: '15vw',
         },
         {
             name: 'Região',
             selector: row => row.location_zip,
             sortable: true,
-            width: '20vw',
+            width: '10vw',
             cell: row => {return regionPerCEP(row.location_zip)}
 
         },
@@ -56,14 +56,14 @@ const EventLocationList = props => {
             name: 'Perfil',
             selector: row => row.location_profile,
             sortable: true,
-            width: '10vw',
+            width: '6vw',
             cell: row => { return profilePretty[row.location_profile - 1] }
         },
         {
             name: 'Distância',
             selector: row => row.distance,
             sortable: true,
-            width: '10vw',
+            width: '8vw',
             right: true,
         },
         {
