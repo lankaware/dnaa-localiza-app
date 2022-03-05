@@ -48,7 +48,9 @@ const REProject = props => {
 
     const [_id, _idSet] = useState(id)
     const [name, nameSet] = useState('')
+    const [addressType, addressTypeSet] = useState('')
     const [address, addressSet] = useState('')
+    const [number, numberSet] = useState('')
     const [neighborhood, neighborhoodSet] = useState('')
     const [city, citySet] = useState('')
     const [state, stateSet] = useState('')
@@ -220,7 +222,7 @@ const REProject = props => {
             </div>
             <div className='data-form'>
                 <Grid container spacing={2} >
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                         <TextField
                             id='redeveloperId'
                             label='Incorporadora'
@@ -250,12 +252,38 @@ const REProject = props => {
                             size='small'
                         />
                     </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            value={addressType}
+                            onChange={(event) => { addressTypeSet(event.target.value) }}
+                            id='adressType'
+                            label='Logradouro'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        />
+                    </Grid>
                     <Grid item xs={5}>
                         <TextField
                             value={address}
                             onChange={(event) => { addressSet(event.target.value) }}
                             id='adreess'
                             label='Endereço'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <TextField
+                            value={number}
+                            onChange={(event) => { numberSet(event.target.value) }}
+                            id='number'
+                            label='Número'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
@@ -276,7 +304,7 @@ const REProject = props => {
                             size='small'
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                         <TextField
                             value={city}
                             onChange={(event) => { citySet(event.target.value) }}
@@ -289,9 +317,6 @@ const REProject = props => {
                             size='small'
                         // inputProps={{ type: 'number' }}
                         />
-                    </Grid>
-                    <Grid item xs={1}>
-
                     </Grid>
                     <Grid item xs={1}>
                         <TextField
@@ -350,11 +375,11 @@ const REProject = props => {
                         />
                     </Grid>
 
-                    <Grid item xs={2}>
+                    {/* <Grid item xs={2}>
                         <Button color="primary" variant='contained'>
-                            Gerar Recibo
+                            Gerar Relatório
                         </Button>
-                    </Grid>
+                    </Grid> */}
 
 
 
@@ -405,7 +430,7 @@ const REProject = props => {
                         </div>
                     </TabPanel>
                     <Box m={1}>
-                        <Button color="primary" color="warning" size='small' variant='contained' startIcon={<OpenInNewIcon />}
+                        <Button color="warning" size='small' variant='contained' startIcon={<OpenInNewIcon />}
                             href="/mktevent/0">INCLUIR Ação
                         </Button>
                     </Box>

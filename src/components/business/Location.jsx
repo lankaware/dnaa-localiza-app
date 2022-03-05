@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { Form } from 'reactstrap';
-import ImageUploading from 'react-images-uploading';
-import resizeFile from './resizer';
 import DataTable from 'react-data-table-component'
 // import Compress from "browser-image-compression";
 import {
     Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
     AppBar, Tabs, Tab, MenuItem, Input, Link
 } from '@mui/material'
+
+import ComboBoxLists from "../commons/ComboBoxLists.json"
 
 import { BsFillCircleFill } from "react-icons/bs";
 
@@ -23,12 +23,15 @@ import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
 import TabPanel, { posTab } from '../commons/TabPanel'
 import { theme } from '../../services/customtheme'
 import { prettyDate } from '../../services/dateutils'
+import { Context } from '../../context/AuthContext'
 
 const objectRef = 'location/'
 const objectId = 'locationid/'
 
 
 const Location = props => {
+    let addressTypeList = ComboBoxLists.AddressTypeList;
+    let typeOfLocation = ComboBoxLists.TypeOfLocation;
 
     const historyColumns = [
         {
@@ -69,6 +72,7 @@ const Location = props => {
     const [monthValue, monthValueSet] = useState('')
     const [lastUpdated, lastUpdatedSet] = useState('')
     const [unavailable, unavailableSet] = useState(false)
+    const [updatedBy, updatedBySet] = useState('')
     const [history, historySet] = useState([]);
 
 
@@ -81,6 +85,9 @@ const Location = props => {
     const [recUpdated, setRecUpdated] = useState(true)
     const [repeatedDialog, repeatedDialogSet] = useState(false)
     const [repeatList, repeatListSet] = useState([])
+
+    const { username } = useContext(Context);
+
 
 
     const [tabValue, setTabValue] = useState(0);
@@ -119,6 +126,7 @@ const Location = props => {
                     monthValueSet(items.record.monthValue || '')
                     lastUpdatedSet(prettyDate(items.record.updatedAt) || '')
                     unavailableSet(items.record.unavailable || '')
+                    updatedBySet(items.record.updatedBy || '')
 
                 })
         } else {
@@ -131,7 +139,6 @@ const Location = props => {
     }, [id, recUpdated])
 
     const saveRec = () => {
-        console.log(photo)
         if (!name) {
             setEmptyRecDialog(true)
             return null
@@ -161,6 +168,7 @@ const Location = props => {
             fifteenValue,
             monthValue,
             unavailable,
+            updatedBy : username         
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
@@ -207,17 +215,17 @@ const Location = props => {
     }
 
     const convertToBase64 = (file) => {
-        console.log(typeof(file), file)
+        console.log(typeof (file), file)
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
             fileReader.readAsDataURL(file);
             fileReader.onload = () => {
-              resolve(fileReader.result);
+                resolve(fileReader.result);
             };
             fileReader.onerror = (error) => {
-              reject(error);
+                reject(error);
             };
-          });
+        });
     }
 
     const resizeAndSet = async (e) => {
@@ -254,18 +262,25 @@ const Location = props => {
         }
     }
 
-    // const checkRepetition = () => {
-    //     repeatList.forEach((el) => {
-    //         console.log(el.address);
-    //         let tempAddress = (`${el.address}, ${el.number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
-    //         let compareAddress = (`${address}, ${number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
-    //         console.log(tempAddress == compareAddress, tempAddress, compareAddress)
-    //        if (tempAddress == compareAddress) {
-    //            repeatedDialogSet(true);
+    const checkRepetition = () => {
+        repeatList.forEach((el) => {
+            let tempAddress = (`${el.address}, ${el.number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
+            let compareAddress = (`${address}, ${number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
+            // console.log(tempAddress == compareAddress, tempAddress, compareAddress)
+            if (tempAddress == compareAddress) {
+                repeatedDialogSet(true);
 
-    //        }
-    //     })
-    // }
+            }
+        })
+    }
+
+    const selectMap = (array) => {
+        console.log(array);
+        array.map((el, i) => {
+            console.log("el", el, i)
+            return <MenuItem value={el}> el </MenuItem>
+        })
+    }
 
     return (
         <div>
@@ -317,7 +332,7 @@ const Location = props => {
                                             onChange={resizeAndSet}
                                             type="file"
                                         />
-                                        <Button sx={{ margin: 1 }} variant='contained' component="span" disabled={!editMode}> 
+                                        <Button sx={{ margin: 1 }} variant='contained' component="span" disabled={!editMode}>
                                             {/* onClick={reziseAndSet}> */}
                                             Adicionar Foto
                                         </Button>
@@ -355,7 +370,13 @@ const Location = props => {
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     variant='outlined'
                                     size='small'
-                                />
+                                    select>
+                                    {typeOfLocation.map((el, i) => {
+                                        console.log("el", el, i)
+                                        return <MenuItem key={i} value={el}> {el} </MenuItem>
+                                    })}
+                                </TextField>
+
                             </Grid>
                             <Grid item xs={4}>
                                 <TextField
@@ -381,7 +402,12 @@ const Location = props => {
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     variant='outlined'
                                     size='small'
-                                />
+                                    select>
+                                    {addressTypeList.map((el, i) => {
+                                        console.log("el", el, i)
+                                        return <MenuItem key={i} value={el}> {el} </MenuItem>
+                                    })}
+                                </TextField>
                             </Grid>
                             <Grid item xs={3}>
                                 <TextField
@@ -389,7 +415,7 @@ const Location = props => {
                                     onChange={(event) => { addressSet(event.target.value) }}
                                     id='address'
                                     label='Endereço'
-                                    // onBlur={checkRepetition}
+                                    onBlur={checkRepetition}
                                     fullWidth={true}
                                     disabled={!editMode}
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
@@ -404,7 +430,7 @@ const Location = props => {
                                     id='number'
                                     label='Número'
                                     fullWidth={true}
-                                    // onBlur={checkRepetition}
+                                    onBlur={checkRepetition}
                                     disabled={!editMode}
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     variant='outlined'
@@ -650,7 +676,7 @@ const Location = props => {
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            value={lastUpdated}
+                            value={`${lastUpdated} - ${updatedBy}`}
                             id='lastUpdated'
                             label='Última atualização'
                             fullWidth={true}
