@@ -131,7 +131,6 @@ const Location = props => {
     }, [id, recUpdated])
 
     const saveRec = () => {
-        console.log(photo)
         if (!name) {
             setEmptyRecDialog(true)
             return null
@@ -207,7 +206,6 @@ const Location = props => {
     }
 
     const convertToBase64 = (file) => {
-        console.log(typeof(file), file)
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
             fileReader.readAsDataURL(file);
@@ -223,9 +221,11 @@ const Location = props => {
     const resizeAndSet = async (e) => {
         let file = e.target.files[0];
         const base64 = await convertToBase64(file);
+        if (base64.length > 100000) {
+            alert("A imagem deve ter no máximo 70k.")
+            return null
+        }
         photoSet(base64);
-        console.log(photo);
-
     };
 
     const containPhoto = (photo) => {

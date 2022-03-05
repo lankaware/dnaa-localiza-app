@@ -48,7 +48,7 @@ const AppMenu = props => {
                         <DropdownMenu className='menu-item'>
                             {/* <DropdownMenu>  */}
                             <DropdownItem className='menu-item' href="/login">Logins</DropdownItem>
-                            <DropdownItem className='menu-item' href="/emailparms">Email</DropdownItem>
+                            {/* <DropdownItem className='menu-item' href="/emailparms">Email</DropdownItem> */}
                         </DropdownMenu>
                     </UncontrolledDropdown>
                 </Nav>
