@@ -4,7 +4,7 @@ import { Form } from 'reactstrap';
 import DataTable from 'react-data-table-component'
 import {
     Grid, TextField, Typography, Button, Link, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
-    AppBar, Tabs, Tab, MenuItem
+    AppBar, Tabs, Tab
 } from '@mui/material'
 
 import EditIcon from '@mui/icons-material/Edit'
@@ -319,7 +319,7 @@ const REDeveloper = props => {
                         </div>
                     </TabPanel>
                     <Box m={1}>
-                        <Button color="primary" size='small' color="warning" variant='contained' startIcon={<OpenInNewIcon />}
+                        <Button size='small' color="warning" variant='contained' startIcon={<OpenInNewIcon />}
                             href="/reproject/0">Incluir Empreendimento
                         </Button>
                     </Box>

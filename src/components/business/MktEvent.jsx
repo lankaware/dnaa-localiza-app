@@ -168,7 +168,7 @@ const MktEvent = props => {
             postRec(objectRef, recObj)
                 .then(result => {
                     _idSet(result.record._id)
-                    if (reprojectId != 0)
+                    if (reprojectId !== 0)
                         getList("mkteventprevious/" + reprojectId + "/" + result.record._id).then((record) => console.log(record))
                 })
         }

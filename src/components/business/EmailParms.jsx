@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { Form } from 'reactstrap';
+// import { useParams } from 'react-router-dom'
+// import { Form } from 'reactstrap';
 import {
-    Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
-    AppBar, Tabs, Tab, MenuItem
-} from '@mui/material'
+    Grid, TextField, Typography, Button, Box,
+    } from '@mui/material'
 
 import EditIcon from '@mui/icons-material/Edit'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
 import CancelIcon from '@mui/icons-material/Cancel'
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn'
 
-import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
+import { getList, putRec, postRec } from '../../services/apiconnect'
 
 const objectRef = 'emailparms/'
 const objectId = 'emailparmsid/'
