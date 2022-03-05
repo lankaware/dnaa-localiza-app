@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Form } from 'reactstrap';
-import ImageUploading from 'react-images-uploading';
-import resizeFile from './resizer';
+//import ImageUploading from 'react-images-uploading';
+//import resizeFile from './resizer';
 import DataTable from 'react-data-table-component'
 // import Compress from "browser-image-compression";
 import {
