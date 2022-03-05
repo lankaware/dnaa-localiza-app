@@ -3,9 +3,11 @@ import { useParams } from 'react-router-dom'
 import { Form } from 'reactstrap';
 import ImageUploading from 'react-images-uploading';
 import resizeFile from './resizer';
+import DataTable from 'react-data-table-component'
+// import Compress from "browser-image-compression";
 import {
     Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
-    AppBar, Tabs, Tab, MenuItem, Input
+    AppBar, Tabs, Tab, MenuItem, Input, Link
 } from '@mui/material'
 
 import { BsFillCircleFill } from "react-icons/bs";
@@ -25,7 +27,18 @@ import { prettyDate } from '../../services/dateutils'
 const objectRef = 'location/'
 const objectId = 'locationid/'
 
+
 const Location = props => {
+
+    const historyColumns = [
+        {
+            name: 'Nome da Ação',
+            selector: row => row.name,
+            sortable: true,
+            width: '30vw',
+            cell: row => (<Link to={"/mktevent/" + row._id}>{row.name}</Link>)
+        },
+    ];
 
     let { id } = useParams()
 
@@ -67,8 +80,8 @@ const Location = props => {
     const [emptyRecDialog, setEmptyRecDialog] = useState(false)
     const [recUpdated, setRecUpdated] = useState(true)
     const [repeatedDialog, repeatedDialogSet] = useState(false)
-    // const [repeatList, repeatListSet] = useState([])
-    
+    const [repeatList, repeatListSet] = useState([])
+
 
     const [tabValue, setTabValue] = useState(0);
 
@@ -78,7 +91,8 @@ const Location = props => {
         if (id !== '0') {
             getList(objectId + id)
                 .then(items => {
-                    historySet(items.history || [])
+                    console.log("Foto", items)
+                    // historySet(items.history || [])
                     typeSet(items.record.type || '')
                     nameSet(items.record.name || '')
                     profileSet(items.record.profile || '')
@@ -94,7 +108,7 @@ const Location = props => {
                     phoneContactSet(items.record.phoneContact || '')
                     phoneSet(items.record.phone || '')
                     whatsSet(items.record.whats || '')
-                    photoSet(items.record.photo || [])
+                    photoSet(items.record.photo || '')
                     disponibilitySet(items.record.disponibility || '')
                     occupiedSet(items.record.occupied || '')
                     operatingHoursSet(items.record.operatingHours || '')
@@ -107,11 +121,11 @@ const Location = props => {
                     unavailableSet(items.record.unavailable || '')
 
                 })
-        } else { 
+        } else {
             getList('location/')
-            .then(items => {
-                repeatListSet(items.record)
-            })
+                .then(items => {
+                    repeatListSet(items.record)
+                })
         }
         setRecUpdated(true)
     }, [id, recUpdated])
@@ -138,7 +152,7 @@ const Location = props => {
             phoneContact,
             phone,
             whats,
-            // photo,
+            photo,
             disponibility,
             operatingHours,
             capacity,
@@ -192,12 +206,29 @@ const Location = props => {
         setEmptyRecDialog(false)
     }
 
+    const convertToBase64 = (file) => {
+        console.log(typeof(file), file)
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+              resolve(fileReader.result);
+            };
+            fileReader.onerror = (error) => {
+              reject(error);
+            };
+          });
+    }
+
     const resizeAndSet = async (e) => {
-        photoSet(URL.createObjectURL(e.target.files[0]));
+        let file = e.target.files[0];
+        const base64 = await convertToBase64(file);
+        photoSet(base64);
+        console.log(photo);
+
     };
 
     const containPhoto = (photo) => {
-        console.log("photo", photo)
         if (Boolean(photo)) {
             return (
                 <Box sx={{ width: '100%', height: '100%' }}>
@@ -286,7 +317,7 @@ const Location = props => {
                                             onChange={resizeAndSet}
                                             type="file"
                                         />
-                                        <Button sx={{ margin: 1 }} variant='contained' component="span">
+                                        <Button sx={{ margin: 1 }} variant='contained' component="span" disabled={!editMode}> 
                                             {/* onClick={reziseAndSet}> */}
                                             Adicionar Foto
                                         </Button>
@@ -304,13 +335,13 @@ const Location = props => {
                                     id='unavailable'
                                     label='Disponível'
                                     fullWidth={true}
-                                    disabled={!insertMode}
+                                    disabled={!editMode}
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     variant='outlined'
                                     size='small'
                                     select>
-                                    <MenuItem key={0} value={false}><BsFillCircleFill color="green"/></MenuItem>
-                                    <MenuItem key={1} value={true}><BsFillCircleFill color="red"/></MenuItem>
+                                    <MenuItem key={0} value={false}><BsFillCircleFill color="green" /></MenuItem>
+                                    <MenuItem key={1} value={true}><BsFillCircleFill color="red" /></MenuItem>
                                 </TextField>
                             </Grid>
                             <Grid item xs={3}>
@@ -680,17 +711,17 @@ const Location = props => {
                         </Tabs>
                     </AppBar>
                     <TabPanel value={tabValue} index={0} dir={theme.direction}>
-                    <DataTable
-                                noHeader={true}
-                                columns={historyColumns}
-                                data={historyList}
-                                Clicked
-                                keyField={'_id'}
-                                highlightOnHover={true}
-                                fixedHeader={true}
-                                paginationPerPage={10}
-                                noDataComponent={'Nenhum registro disponível.'}
-                            />
+                        <DataTable
+                            noHeader={true}
+                            columns={historyColumns}
+                            data={history}
+                            Clicked
+                            keyField={'_id'}
+                            highlightOnHover={true}
+                            fixedHeader={true}
+                            paginationPerPage={10}
+                            noDataComponent={'Nenhum registro disponível.'}
+                        />
                     </TabPanel>
                 </div>
 
