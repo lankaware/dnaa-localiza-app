@@ -4,7 +4,7 @@ import { Form } from 'reactstrap';
 import DataTable from 'react-data-table-component'
 import {
     Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
-    AppBar, Tabs, Tab, MenuItem, Input, Link
+    AppBar, Tabs, Tab, MenuItem, Input, Link, Divider
 } from '@mui/material'
 
 import ComboBoxLists from "../commons/ComboBoxLists.json"
@@ -167,7 +167,7 @@ const Location = props => {
             fifteenValue,
             monthValue,
             unavailable,
-            updatedBy : username         
+            updatedBy: username
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
@@ -317,7 +317,6 @@ const Location = props => {
                 </div>
             </div>
             <div className='data-form'>
-
                 <Grid container spacing={2} >
                     <Grid item xs={3}>
                         <Grid container spacing={2} >
@@ -378,7 +377,7 @@ const Location = props => {
                                 </TextField>
 
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={7}>
                                 <TextField
                                     value={name}
                                     onChange={(event) => { nameSet(event.target.value.toUpperCase()) }}
@@ -391,7 +390,7 @@ const Location = props => {
                                     size='small'
                                 />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs={3}>
                                 <TextField
                                     value={addressType}
                                     onChange={(event) => { addressTypeSet(event.target.value) }}
@@ -409,7 +408,7 @@ const Location = props => {
                                     })}
                                 </TextField>
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={6}>
                                 <TextField
                                     value={address}
                                     onChange={(event) => { addressSet(event.target.value) }}
@@ -423,7 +422,7 @@ const Location = props => {
                                     size='small'
                                 />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs={3}>
                                 <TextField
                                     value={number}
                                     onChange={(event) => { numberSet(event.target.value) }}
@@ -438,7 +437,7 @@ const Location = props => {
                                     inputProps={{ type: 'text' }}
                                 />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs={3}>
                                 <TextField
                                     value={neighborhood}
                                     onChange={(event) => { neighborhoodSet(event.target.value) }}
@@ -465,7 +464,7 @@ const Location = props => {
                                 // inputProps={{ type: 'number' }}
                                 />
                             </Grid>
-                            <Grid item xs={1}>
+                            <Grid item xs={2}>
                                 <TextField
                                     value={state}
                                     onChange={(event) => { stateSet(event.target.value) }}
@@ -479,7 +478,7 @@ const Location = props => {
                                 // inputProps={{ type: 'number' }}
                                 />
                             </Grid>
-                            <Grid item xs={2}>
+                            <Grid item xs={3}>
                                 <TextField
                                     value={zip}
                                     onChange={(event) => { zipSet(event.target.value) }}
@@ -526,7 +525,7 @@ const Location = props => {
                                     <MenuItem key={1} value={'pessoalmente'}>{'pessoalmente'}</MenuItem>
                                 </TextField>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={6}>
                                 <TextField
                                     value={email}
                                     onChange={(event) => { emailSet(event.target.value) }}
@@ -542,7 +541,11 @@ const Location = props => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={12}>
+                        <Divider />
+                    </Grid>
+
+                    <Grid item xs={3}>
                         <TextField
                             value={phone}
                             onChange={(event) => { phoneSet(event.target.value) }}
@@ -556,7 +559,7 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
                         <TextField
                             value={whats}
                             onChange={(event) => { whatsSet(event.target.value) }}
@@ -570,7 +573,7 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
                         <TextField
                             value={operatingHours}
                             onChange={(event) => { operatingHoursSet(event.target.value) }}
@@ -584,7 +587,7 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
                         <TextField
                             value={capacity}
                             onChange={(event) => { capacitySet(event.target.value) }}
@@ -687,7 +690,7 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                         <TextField
                             value={disponibility}
                             onChange={(event) => { disponibilitySet(event.target.value) }}
@@ -703,7 +706,7 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={6}>
                         <TextField
                             value={occupied}
                             onChange={(event) => { occupiedSet(event.target.value) }}
@@ -722,7 +725,6 @@ const Location = props => {
                 </Grid>
             </div>
             <Form className='data-form-level1'>
-
                 <div >
                     <AppBar position="static" color="default">
                         <Tabs
