@@ -17,6 +17,13 @@ const CustomerList = props => {
 
     const columns = [
         {
+            name: 'Tipo',
+            selector: row => row.type,
+            sortable: true,
+            width: '15vw',
+            cell: row => (<Link to={"/location/" + row._id}>{row.type}</Link>)
+        },
+        {
             name: 'Nome do Local',
             selector: row => row.name,
             sortable: true,
@@ -25,13 +32,19 @@ const CustomerList = props => {
         },
         {
             name: 'Endereço',
-            selector: row => row.address,
+            selector: row => row.fulladdress,
             sortable: true,
             width: '20vw',
         },
+        // {
+        //     name: 'CEP',
+        //     selector: row => row.zip,
+        //     sortable: true,
+        //     width: '10vw',
+        // },
         {
-            name: 'CEP',
-            selector: row => row.zip,
+            name: 'Bairro',
+            selector: row => row.neighborhood,
             sortable: true,
             width: '10vw',
         },
@@ -76,7 +89,7 @@ const CustomerList = props => {
         <div>
             <div className='tool-bar'>
                 <div >
-                    <Typography variant='h6' className='tool-title' noWrap={true}>Lista de Pontos</Typography>
+                    <Typography variant='h6' className='tool-title' noWrap={true}>Lista de Pontos Fixos</Typography>
                 </div>
 
                 <div className={classes.toolButtons + ' button-link'}>

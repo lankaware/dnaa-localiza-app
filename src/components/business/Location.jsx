@@ -267,7 +267,7 @@ const Location = props => {
             let tempAddress = (`${el.address}, ${el.number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
             let compareAddress = (`${address}, ${number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
             // console.log(tempAddress == compareAddress, tempAddress, compareAddress)
-            if (tempAddress == compareAddress) {
+            if (tempAddress === compareAddress) {
                 repeatedDialogSet(true);
 
             }
@@ -366,7 +366,7 @@ const Location = props => {
                                     id='type'
                                     label='Tipo do Local'
                                     fullWidth={true}
-                                    disabled={!insertMode}
+                                    disabled={!editMode}
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     variant='outlined'
                                     size='small'
@@ -385,7 +385,7 @@ const Location = props => {
                                     id='name'
                                     label='Nome do Local'
                                     fullWidth={true}
-                                    disabled={!insertMode}
+                                    disabled={!editMode}
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     variant='outlined'
                                     size='small'
@@ -435,7 +435,7 @@ const Location = props => {
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     variant='outlined'
                                     size='small'
-                                    inputProps={{ type: 'number' }}
+                                    inputProps={{ type: 'text' }}
                                 />
                             </Grid>
                             <Grid item xs={2}>

@@ -3,7 +3,7 @@ import { makeStyles } from '@mui/styles'
 export const useStyles = makeStyles(theme => ({
     toolButtons: {
       display: 'flex',
-      'width': '45vw',
+      'width': '55vw',
       'justify-content': 'flex-end',
       "& > *": {
         margin: theme.spacing(1),

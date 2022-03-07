@@ -68,7 +68,7 @@
     border: rgb(172, 164, 164);
     border-style: none; /*solid;*/
     border-width: 1px;
-    width: 75vw;
+    width: 85vw;
     margin-top: 5px;
     margin-left: 5vw;
 }
@@ -116,7 +116,7 @@
     border: #a0a0a0;
     border-style: none; /*solid;*/
     border-width: 1px;
-    width: 75vw;
+    width: 85vw;
     min-height: 60px;
     background-color: #f7dbbb;
     /* background-color: #b1e2f1; */
