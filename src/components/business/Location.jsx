@@ -160,6 +160,7 @@ const Location = props => {
             whats,
             photo,
             disponibility,
+            occupied,
             operatingHours,
             capacity,
             dayValue,

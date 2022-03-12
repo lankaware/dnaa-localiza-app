@@ -21,7 +21,7 @@ const CustomerList = props => {
             selector: row => row.type,
             sortable: true,
             width: '15vw',
-            cell: row => (<Link to={"/location/" + row._id}>{row.type}</Link>)
+            // cell: row => (<Link to={"/location/" + row._id}>{row.type}</Link>)
         },
         {
             name: 'Nome do Local',

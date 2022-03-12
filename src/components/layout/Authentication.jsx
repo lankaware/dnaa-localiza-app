@@ -77,7 +77,8 @@ const Authentication = props => {
                         </Grid>
                         <Grid item xs={6}>
                             <Button color='primary' variant='contained' size='small' endIcon={<SubscriptionsIcon />}
-                                onClick={_ => loginConfirm()} disabled={(false)}>Entrar</Button>
+                                onClick={_ => loginConfirm()}
+                                onKeyDown={(e) => e.key === "Enter" ? loginConfirm() : null} disabled={(false)}>Entrar</Button>
                         </Grid>
                     </Grid>
                 </div>
