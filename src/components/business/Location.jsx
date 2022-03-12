@@ -97,7 +97,6 @@ const Location = props => {
         if (id !== '0') {
             getList(objectId + id)
                 .then(items => {
-                    console.log("Foto", items)
                     // historySet(items.history || [])
                     typeSet(items.record.type || '')
                     nameSet(items.record.name || '')
@@ -267,7 +266,6 @@ const Location = props => {
         repeatList.forEach((el) => {
             let tempAddress = (`${el.address}, ${el.number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
             let compareAddress = (`${address}, ${number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
-            // console.log(tempAddress == compareAddress, tempAddress, compareAddress)
             if (tempAddress === compareAddress) {
                 repeatedDialogSet(true);
 
@@ -276,9 +274,7 @@ const Location = props => {
     }
 
     const selectMap = (array) => {
-        console.log(array);
         array.map((el, i) => {
-            console.log("el", el, i)
             return <MenuItem value={el}> el </MenuItem>
         })
     }
@@ -372,7 +368,6 @@ const Location = props => {
                                     size='small'
                                     select>
                                     {typeOfLocation.map((el, i) => {
-                                        console.log("el", el, i)
                                         return <MenuItem key={i} value={el}> {el} </MenuItem>
                                     })}
                                 </TextField>
@@ -404,7 +399,6 @@ const Location = props => {
                                     size='small'
                                     select>
                                     {addressTypeList.map((el, i) => {
-                                        console.log("el", el, i)
                                         return <MenuItem key={i} value={el}> {el} </MenuItem>
                                     })}
                                 </TextField>

@@ -23,7 +23,9 @@ const objectChild = 'eventlocationevent/'
 const objectPrevious = "mkteventprevious/"
 
 var currentItem = '0'
-var address = ''
+// var addressType = ''
+var fulladdress = ''
+// var number = ''
 var city = ''
 var state = ''
 var selectedToSave = []
@@ -148,7 +150,6 @@ const EventLocationList = props => {
         if (mktEventId === '0') {
             getList(objectPrevious + props.reprojectId)
                 .then(items => {
-                    console.log("previous items", items)
                     if (items) setList(items.record)
                 })
         }
@@ -158,7 +159,6 @@ const EventLocationList = props => {
         if (rowid !== '0') {
             getList(`${objectId}${rowid}`)
                 .then(items => {
-                    console.log(items)
                     _idSet(items.record._id || '')
                     locationIdSet(items.record.location_id || '')
                     locationZipSet(items.record.zip || '')
@@ -192,13 +192,14 @@ const EventLocationList = props => {
         recObj = JSON.stringify(recObj)
         putRec('location/', recObj)
             .then(items => {
+                console.log('location', items)
                 items.record.map(item => {
                     // verficar se local já existe em enventLocation 
                     const alreadySelected = list.findIndex((listItem) => {
                         return listItem.location_id === item._id
                     })
                     if (alreadySelected !== -1) return null
-                    const localDest = `${item.address} ${item.city} ${item.state}`
+                    const localDest = `${item.fulladdress} ${item.city} ${item.state}`
                     const uri = `locationdistance/${localOrigin}/${localDest}`
                     getList(uri)
                         .then(result => {
@@ -243,7 +244,7 @@ const EventLocationList = props => {
     }
 
     const calcDistance = () => {
-        const localDest = `${address} ${city} ${state}`
+        const localDest = `${fulladdress} ${city} ${state}`
         const uri = `locationdistance/${localOrigin}/${localDest}`
         getList(uri)
             .then(result => {
@@ -290,7 +291,7 @@ const EventLocationList = props => {
     const handleLocationSelect = (evalue) => {
         locationIdSet(evalue)
         const currentLocation = locationList.findIndex((item) => { return item._id === evalue })
-        address = locationList[currentLocation].address
+        fulladdress = locationList[currentLocation].fulladdress
         city = locationList[currentLocation].city
         state = locationList[currentLocation].state
         recalcEnabledSet(true)
@@ -412,7 +413,7 @@ const EventLocationList = props => {
                                     // sx={{ width: 150 }}             cell: row => { return profilePretty[row.location_profile - 1] }
                                     select>
                                     {locationList.map((option) => (
-                                        <MenuItem key={option._id} value={option._id}>{`${option.name} / ${option.address} / ${option.neighborhood} - ${profilePretty[option.profile - 1]} `}</MenuItem>
+                                        <MenuItem key={option._id} value={option._id}>{`${option.name} / ${option.fulladdress} / ${option.neighborhood} - ${profilePretty[option.profile - 1]} `}</MenuItem>
                                     ))}
                                 </TextField>
 

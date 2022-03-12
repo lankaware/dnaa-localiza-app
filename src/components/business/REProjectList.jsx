@@ -37,7 +37,6 @@ const REProjectList = (props) => {
   useEffect(() => {
     getList(objectRef)
       .then(items => {
-        console.log('items.record', items.record)
         setList(items.record)
       })
   }, [])

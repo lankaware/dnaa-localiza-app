@@ -97,12 +97,10 @@ const REDeveloper = props => {
                 })
             getList('reprojectperdeveloper/' + _id)
                 .then(items => {
-                    console.log('items.record', items.record)
                     projectListSet(items.record)
                 })
                 getList('mkteventperdeveloper/' + _id)
                 .then(items => {
-                    console.log('items.record', items.record)
                     eventListSet(items.record)
                 })
         }

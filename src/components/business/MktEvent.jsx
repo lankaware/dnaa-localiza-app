@@ -35,7 +35,7 @@ const MktEvent = props => {
     const [reprojectId, reprojectIdSet] = useState('')
 
     const [reprojectName, reprojectNameSet] = useState('')
-    const [address, addressSet] = useState('')
+    const [fulladdress, fulladdressSet] = useState('')
     const [neighborhood, neighborhoodSet] = useState('')
     const [city, citySet] = useState('')
     const [state, stateSet] = useState('')
@@ -62,40 +62,38 @@ const MktEvent = props => {
     useEffect(() => {
         getList('reproject')
             .then(items => {
+                console.log('1')
                 reprojectListSet(items.record)
             })
         if (id !== '0') {
             getList(objectId + id)
                 .then(items => {
-                    console.log(id, items)
+                    console.log('2')
                     nameSet(items.record.name || '')
                     dateSet((items.record.initialDate || '').substr(0, 10))
                     profileFromSet(items.record.profileFrom || '')
                     profileToSet(items.record.profileTo || '')
                     reprojectIdSet(items.record.reproject_id || '')
-                    console.log(items.record.reproject_id)
                     return items.record.reproject_id;
                 })
                 .then(id => {
-                    console.log("id", id)
                     if (!id) return null
                     getList('reprojectid/' + id)
                         .then(items => {
-                            console.log("id and items", id, items)
-                            reprojectNameSet(items.record.name || '')
-                            addressSet(items.record.address || '')
-                            neighborhoodSet(items.record.neighborhood || '')
-                            citySet(items.record.city || '')
-                            stateSet(items.record.state || '')
-                            zipSet(items.record.zip || '')
-                            redeveloperIdSet(items.record.reDeveloper_id || '')
-                            return items.record.reDeveloper_id
+                            console.log('3')
+                            reprojectNameSet(items.record[0].name || '')
+                            fulladdressSet(items.record[0].fulladdress || '')
+                            neighborhoodSet(items.record[0].neighborhood || '')
+                            citySet(items.record[0].city || '')
+                            stateSet(items.record[0].state || '')
+                            zipSet(items.record[0].zip || '')
+                            redeveloperIdSet(items.record[0].reDeveloper_id || '')
+                            return items.record[0].reDeveloper_id
                         })
                         .then(id => {
                             if (!id) return null
                             getList('redeveloperid/' + id)
                                 .then(items => {
-                                    console.log(id, items)
                                     emailSet(items.record.email || '')
                                     phoneSet(items.record.phone || '')
                                 })
@@ -107,12 +105,11 @@ const MktEvent = props => {
     }, [id, recUpdated])
 
     useEffect(() => {
-        console.log("reprojectId", reprojectId)
+        console.log('4')
         getList('reprojectid/' + reprojectId)
             .then(items => {
-                console.log("Itens", items)
                 reprojectNameSet(items.record.name || '')
-                addressSet(items.record.address || '')
+                fulladdressSet(items.record.fulladdress || '')
                 neighborhoodSet(items.record.neighborhood || '')
                 citySet(items.record.city || '')
                 stateSet(items.record.state || '')
@@ -130,6 +127,7 @@ const MktEvent = props => {
     }, [reprojectId])
 
     useEffect(() => {
+        console.log('5')
         getList('redeveloperid/' + redeveloperId)
             .then(items => {
                 emailSet(items.record.email || '')
@@ -138,6 +136,7 @@ const MktEvent = props => {
     }, [redeveloperId])
 
     useEffect(() => {
+        console.log('6')
         getList('redeveloperid/' + redeveloperId)
             .then(items => {
                 emailSet(items.record.email || '')
@@ -159,7 +158,6 @@ const MktEvent = props => {
 
 
         }
-        console.log(recObj)
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
             putRec(objectId + _id, recObj)
@@ -289,12 +287,12 @@ const MktEvent = props => {
 
                     <Grid item xs={4}>
                         <TextField
-                            value={address}
-                            onChange={(event) => { addressSet(event.target.value) }}
+                            value={fulladdress}
+                            onChange={(event) => { fulladdressSet(event.target.value) }}
                             id='adreess'
                             label='Endereço'
                             fullWidth={true}
-                            disabled={!editMode}
+                            disabled={true}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
@@ -447,7 +445,7 @@ const MktEvent = props => {
                         <EventLocationList
                             mktEventId={_id}
                             editMode={editMode}
-                            eventAddress={`${address} ${city} ${state}`}
+                            eventAddress={`${fulladdress} ${city} ${state}`}
                             profileFrom={profileFrom}
                             profileTo={profileTo}
                             zip={zip}
