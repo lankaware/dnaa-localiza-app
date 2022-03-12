@@ -154,3 +154,18 @@
     /* verified */
     color: #ffffff;
 }
+
+.data-bottom-margin {
+    margin: 20px
+}
+
+.only-buttons {
+    display: flex;
+    margin-top: 0px;
+    padding: 5px 15px 5px 15px;
+    background-color: #ffffff;
+}
+
+.only-buttons a:hover {
+    color: #ffffff;
+}

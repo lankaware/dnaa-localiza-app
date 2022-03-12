@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
-import { regionPerCEP } from '../commons/RegionPerCEP'
-
 import {
     Button, Box, Grid, TextField, Dialog, MenuItem, DialogTitle, DialogContent, DialogActions, FormControlLabel, Checkbox,
 } from '@mui/material'
+import ReactToPrint from "react-to-print"
+
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt'
 import SocialDistanceIcon from '@mui/icons-material/SocialDistance'
@@ -14,6 +14,8 @@ import EmailIcon from '@mui/icons-material/Email'
 import { useStyles } from '../../services/stylemui'
 import { deleteRec, getList, putRec, postRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
+import { regionPerCEP } from '../commons/RegionPerCEP'
+import ProposalLayout from './ProposalLayout'
 
 const objectRef = 'eventlocation/'
 const objectId = 'eventlocationid/'
@@ -49,7 +51,7 @@ const EventLocationList = props => {
             selector: row => row.location_zip,
             sortable: true,
             width: '10vw',
-            cell: row => {return regionPerCEP(row.location_zip)}
+            cell: row => { return regionPerCEP(row.location_zip) }
 
         },
         {
@@ -123,6 +125,9 @@ const EventLocationList = props => {
     const [appUpdate, setAppUpdate] = useState(true)
     const [locationSelectList, locationSelectListSet] = useState([])
     const [recalcEnabled, recalcEnabledSet] = useState(false)
+
+    const [proposalPreview, proposalPreviewSet] = useState(false)
+    const proposalRef = useRef()
 
     useEffect(() => {
         if (mktEventId !== '0') {
@@ -301,9 +306,8 @@ const EventLocationList = props => {
         return null
     }
 
-    const sendMessageSelected = (allSelected, selectedCount, selectedRows) => {
-        //selectedToSave = selectedRows
-        return null
+    const generateProposal = (allSelected, selectedCount, selectedRows) => {
+        proposalPreviewSet(true)
     }
 
     return (
@@ -344,8 +348,8 @@ const EventLocationList = props => {
                     BUSCAR POR PROXIMIDADE
                 </Button>
                 <Button color="secondary" size='small' variant='contained' startIcon={<EmailIcon />}
-                    disabled={mktEventId === '0'} onClick={sendMessageSelected} sx={{ 'margin': '0 10px' }}>
-                    ENVIAR MENSAGEM
+                    disabled={mktEventId === '0'} onClick={generateProposal} sx={{ 'margin': '0 10px' }}>
+                    GERAR PROPOSTA
                 </Button>
             </Box>
 
@@ -457,6 +461,40 @@ const EventLocationList = props => {
                         CANCELAR
                     </Button>
                 </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={proposalPreview}
+                fullWidth={true}
+                maxWidth={'lg'}
+            >
+                <DialogTitle id="alert-dialog-title">{"Proposta Comercial"}</DialogTitle>
+                <DialogContent dividers>
+                    <ProposalLayout
+                        ref={proposalRef}
+                    />
+                </DialogContent>
+                <div className='data-bottom-margin'></div>
+                <div className='only-buttons'>
+                    <ReactToPrint className='button-link'
+                        trigger={() =>
+                            <Box m={1}>
+                                <Button variant='contained' size='small' color='primary' href="#">
+                                    Imprimir
+                                </Button>
+                            </Box>}
+                        content={() => proposalRef.current}
+                        onAfterPrint={() => { proposalPreviewSet(false) }}
+                        documentTitle={'Proposta Comercial'}
+                        pageStyle="@page { size: 5in 8in }"
+                    />
+                    <Box m={1}>
+                        <Button color='primary' variant='contained' size='small'
+                            onClick={_ => { proposalPreviewSet(false) }} disabled={false}>
+                            Fechar
+                        </Button>
+                    </Box>
+                </div>
             </Dialog>
 
         </div>
