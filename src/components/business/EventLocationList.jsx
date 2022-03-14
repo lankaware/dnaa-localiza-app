@@ -127,6 +127,7 @@ const EventLocationList = props => {
     const [appUpdate, setAppUpdate] = useState(true)
     const [locationSelectList, locationSelectListSet] = useState([])
     const [recalcEnabled, recalcEnabledSet] = useState(false)
+    const [neighborFilter, neighborFilterSet] = useState('')
 
     const [proposalPreview, proposalPreviewSet] = useState(false)
     const proposalRef = useRef()
@@ -399,6 +400,21 @@ const EventLocationList = props => {
                     <div className='modal-form'>
                         <Grid container spacing={2} >
                             <Grid item xs={12}>
+                                <TextField
+                                    value={neighborFilter}
+                                    onChange={(event) => { neighborFilterSet(event.target.value) }}
+                                    id='neighborFilter'
+                                    label='Bairro de filtro'
+                                    fullWidth={true}
+                                    disabled={false}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    type='text'
+                                />
+                            </Grid>
+
+                            <Grid item xs={12}>
 
                                 <TextField
                                     id='location-select'
@@ -412,9 +428,11 @@ const EventLocationList = props => {
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     // sx={{ width: 150 }}             cell: row => { return profilePretty[row.location_profile - 1] }
                                     select>
-                                    {locationList.map((option) => (
+                                    {locationList.map((option) => {
+                                        if (neighborFilter && option.neighborhood !==  neighborFilter) return null
+                                        return (
                                         <MenuItem key={option._id} value={option._id}>{`${option.name} / ${option.fulladdress} / ${option.neighborhood} - ${profilePretty[option.profile - 1]} `}</MenuItem>
-                                    ))}
+                                    )})}
                                 </TextField>
 
                             </Grid>
