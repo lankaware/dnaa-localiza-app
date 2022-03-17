@@ -71,7 +71,7 @@ const EventLocationList = props => {
             right: true,
         },
         {
-            name: 'Selecionado Cliente',
+            name: 'Aprovado',
             selector: row => row.selected,
             width: '10vw',
             'data-tag': "allowRowEvents",
@@ -118,9 +118,10 @@ const EventLocationList = props => {
     const [locationId, locationIdSet] = useState('')
     const [locationZip, locationZipSet] = useState('')
     const [distance, distanceSet] = useState('')
-    const [disponibility, disponibilitySet] = useState('')
     const [selected, selectedSet] = useState(false)
     const [contracted, contractedSet] = useState(false)
+    const [disponibility, disponibilitySet] = useState('')
+    const [occupied, occupiedSet] = useState('')
 
     const [editDialog, editDialogSet] = useState(false)
     const [localSelectDialog, localSelectDialogSet] = useState(false)
@@ -164,18 +165,29 @@ const EventLocationList = props => {
                     locationIdSet(items.record.location_id || '')
                     locationZipSet(items.record.zip || '')
                     distanceSet(items.record.distance || 0)
-                    disponibilitySet(items.record.disponibility || '')
                     selectedSet(items.record.selected || false)
                     contractedSet(items.record.contracted || false)
+                    const locationIndex = locationList.findIndex((listItem) => {
+                        return listItem._id === items.record.location_id
+                    })
+                    console.log('locationList', locationList)
+                    console.log('items.record.location_id', items.record.location_id)
+                    console.log('locationIndex', locationIndex)
+                    if (locationIndex !== -1) {
+                        disponibilitySet(locationList[locationIndex].disponibility || '')
+                        occupiedSet(locationList[locationIndex].occupied || '')
+                    }
                 })
         } else {
             locationIdSet('')
             distanceSet(0)
             locationZipSet("")
-            disponibilitySet('')
             selectedSet(false)
             contractedSet(false)
+            disponibilitySet('')
+            occupiedSet('')
         }
+
         currentItem = rowid || '0'
         editDialogSet(true)
     }
@@ -429,10 +441,11 @@ const EventLocationList = props => {
                                     // sx={{ width: 150 }}             cell: row => { return profilePretty[row.location_profile - 1] }
                                     select>
                                     {locationList.map((option) => {
-                                        if (neighborFilter && option.neighborhood !==  neighborFilter) return null
+                                        if (neighborFilter && option.neighborhood !== neighborFilter) return null
                                         return (
-                                        <MenuItem key={option._id} value={option._id}>{`${option.name} / ${option.fulladdress} / ${option.neighborhood} - ${profilePretty[option.profile - 1]} `}</MenuItem>
-                                    )})}
+                                            <MenuItem key={option._id} value={option._id}>{`${option.name} / ${option.fulladdress} / ${option.neighborhood} - ${profilePretty[option.profile - 1]} `}</MenuItem>
+                                        )
+                                    })}
                                 </TextField>
 
                             </Grid>
@@ -456,7 +469,7 @@ const EventLocationList = props => {
 
                             <Grid item xs={4}>
                                 <FormControlLabel
-                                    label="Selecionado Cliente?"
+                                    label="Aprovado?"
                                     control={
                                         <Checkbox
                                             checked={selected}
@@ -465,6 +478,40 @@ const EventLocationList = props => {
                                     }
                                 />
                             </Grid>
+
+                            <Grid item xs={12}>
+                                <TextField
+                                    value={disponibility}
+                                    onChange={(event) => { disponibilitySet(event.target.value) }}
+                                    id='disponibility'
+                                    label='Datas Disponíveis'
+                                    fullWidth={true}
+                                    disabled={false}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    type='text'
+                                    multiline
+                                    rows="2"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    value={occupied}
+                                    onChange={(event) => { occupiedSet(event.target.value) }}
+                                    id='occupied'
+                                    label='Datas Selecionadas'
+                                    fullWidth={true}
+                                    disabled={false}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    type='text'
+                                    multiline
+                                    rows="2"
+                                />
+                            </Grid>
+
                         </Grid>
                     </div>
                 </DialogContent>

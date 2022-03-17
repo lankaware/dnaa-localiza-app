@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { Form } from 'reactstrap';
 import DataTable from 'react-data-table-component'
 import {
     Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
-    AppBar, Tabs, Tab, MenuItem, Input, Link, Divider
+    AppBar, Tabs, Tab, MenuItem, Input, Divider
 } from '@mui/material'
 
 import ComboBoxLists from "../commons/ComboBoxLists.json"
@@ -21,12 +22,14 @@ import { useStyles } from '../../services/stylemui'
 import { getList, putRec, postRec, deleteRec } from '../../services/apiconnect'
 import TabPanel, { posTab } from '../commons/TabPanel'
 import { theme } from '../../services/customtheme'
-import { prettyDate } from '../../services/dateutils'
+import { defaultDateBr, prettyDate } from '../../services/dateutils'
 import { Context } from '../../context/AuthContext'
 
 const objectRef = 'location/'
 const objectId = 'locationid/'
 
+var repeatedLocationId
+var repeatedLocationName
 
 const Location = props => {
     let addressTypeList = ComboBoxLists.AddressTypeList;
@@ -69,11 +72,10 @@ const Location = props => {
     const [weekendValue, weekendValueSet] = useState('')
     const [fifteenValue, fifteenValueSet] = useState('')
     const [monthValue, monthValueSet] = useState('')
-    const [lastUpdated, lastUpdatedSet] = useState('')
+    const [otherValues, otherValuesSet] = useState('')
     const [unavailable, unavailableSet] = useState(false)
     const [updatedBy, updatedBySet] = useState('')
     const [history, historySet] = useState([]);
-
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -86,8 +88,7 @@ const Location = props => {
     const [repeatList, repeatListSet] = useState([])
 
     const { username } = useContext(Context);
-
-
+    const dateChanged = prettyDate(defaultDateBr())
 
     const [tabValue, setTabValue] = useState(0);
 
@@ -122,14 +123,17 @@ const Location = props => {
                     weekendValueSet(items.record.weekendValue || '')
                     fifteenValueSet(items.record.fifteenValue || '')
                     monthValueSet(items.record.monthValue || '')
-                    lastUpdatedSet(prettyDate(items.record.updatedAt) || '')
+                    otherValuesSet(items.record.otherValues || '')
                     unavailableSet(items.record.unavailable || '')
                     updatedBySet(items.record.updatedBy || '')
-
+                    repeatedDialogSet(false)
+                    setInsertMode(false)
+                    setEditMode(false)
                 })
         } else {
             getList('location/')
                 .then(items => {
+                    console.log('items', items)
                     repeatListSet(items.record)
                 })
         }
@@ -166,8 +170,9 @@ const Location = props => {
             weekendValue,
             fifteenValue,
             monthValue,
+            otherValues,
             unavailable,
-            updatedBy: username
+            updatedBy,
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
@@ -263,12 +268,15 @@ const Location = props => {
     }
 
     const checkRepetition = () => {
+        console.log('repeatList', repeatList)
         repeatList.forEach((el) => {
             let tempAddress = (`${el.address}, ${el.number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
             let compareAddress = (`${address}, ${number}`).normalize("NFD").replace(/\p{Diacritic}/gu, "");
+            console.log('compareAddress', compareAddress)
             if (tempAddress === compareAddress) {
+                repeatedLocationId = el._id
+                repeatedLocationName = el.name
                 repeatedDialogSet(true);
-
             }
         })
     }
@@ -540,7 +548,7 @@ const Location = props => {
                         <Divider />
                     </Grid>
 
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                         <TextField
                             value={phone}
                             onChange={(event) => { phoneSet(event.target.value) }}
@@ -554,7 +562,7 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                         <TextField
                             value={whats}
                             onChange={(event) => { whatsSet(event.target.value) }}
@@ -568,7 +576,7 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                         <TextField
                             value={operatingHours}
                             onChange={(event) => { operatingHoursSet(event.target.value) }}
@@ -582,12 +590,12 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                         <TextField
                             value={capacity}
                             onChange={(event) => { capacitySet(event.target.value) }}
                             id='capacity'
-                            label='Capacidade'
+                            label='Máximo de corretores'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
@@ -599,7 +607,7 @@ const Location = props => {
                     <Grid item xs={2}>
                         <TextField
                             id='profile'
-                            label='Perfil do Local'
+                            label='Perfil'
                             value={profile}
                             onChange={(event) => { profileSet(event.target.value) }}
                             size='small'
@@ -619,7 +627,7 @@ const Location = props => {
                     <Grid item xs={2}>
                         <TextField
                             value={dayValue}
-                            onChange={(event) => { dayValueSet(event.target.value) }}
+                            onChange={(event) => { dayValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='dayValue'
                             label='Valor diária durante semana'
                             fullWidth={true}
@@ -627,13 +635,13 @@ const Location = props => {
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
-                        // inputProps={{ type: 'number' }}
+                            inputProps={{ type: 'number' }}
                         />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
                             value={weekendValue}
-                            onChange={(event) => { weekendValueSet(event.target.value) }}
+                            onChange={(event) => { weekendValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='weekendValue'
                             label='Valor diária final de semana'
                             fullWidth={true}
@@ -641,13 +649,13 @@ const Location = props => {
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
-                        // inputProps={{ type: 'number' }}
+                            inputProps={{ type: 'number' }}
                         />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
                             value={fifteenValue}
-                            onChange={(event) => { fifteenValueSet(event.target.value) }}
+                            onChange={(event) => { fifteenValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='fifteenValue'
                             label='Valor Quinzenal'
                             fullWidth={true}
@@ -655,13 +663,13 @@ const Location = props => {
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
-                        // inputProps={{ type: 'number' }}
+                            inputProps={{ type: 'number' }}
                         />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
                             value={monthValue}
-                            onChange={(event) => { monthValueSet(event.target.value) }}
+                            onChange={(event) => { monthValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='monthValue'
                             label='Valor Mensal'
                             fullWidth={true}
@@ -669,16 +677,17 @@ const Location = props => {
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
-                        // inputProps={{ type: 'number' }}
+                            inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={4}>
                         <TextField
-                            value={`${lastUpdated} - ${updatedBy}`}
-                            id='lastUpdated'
-                            label='Última atualização'
+                            value={otherValues}
+                            onChange={(event) => { otherValuesSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
+                            id='otherValues'
+                            label='Outros Valores/Media Kit'
                             fullWidth={true}
-                            disabled={true}
+                            disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
@@ -688,7 +697,7 @@ const Location = props => {
                     <Grid item xs={6}>
                         <TextField
                             value={disponibility}
-                            onChange={(event) => { disponibilitySet(event.target.value) }}
+                            onChange={(event) => { disponibilitySet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='disponibility'
                             label='Datas Disponiveis'
                             fullWidth={true}
@@ -704,7 +713,7 @@ const Location = props => {
                     <Grid item xs={6}>
                         <TextField
                             value={occupied}
-                            onChange={(event) => { occupiedSet(event.target.value) }}
+                            onChange={(event) => { occupiedSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='occupied'
                             label='Datas Selecionadas'
                             fullWidth={true}
@@ -714,6 +723,19 @@ const Location = props => {
                             size='small'
                             multiline
                             rows="2"
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={4}>
+                        <TextField
+                            value={updatedBy}
+                            id='lastUpdated'
+                            label='Última atualização'
+                            fullWidth={true}
+                            disabled={true}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
@@ -752,7 +774,6 @@ const Location = props => {
 
             <Dialog
                 open={deleteDialog}
-            // onClose={delCancel}
             >
                 <DialogTitle id="alert-dialog-title">{"Apagar o registro selecionado?"}</DialogTitle>
                 <DialogContent>
@@ -772,7 +793,6 @@ const Location = props => {
 
             <Dialog
                 open={deleteInfoDialog}
-            // onClose={delInformClose}
             >
                 <DialogTitle id="alert-dialog-title">{"Registro removido do cadastro."}</DialogTitle>
                 <DialogContent>
@@ -789,7 +809,6 @@ const Location = props => {
 
             <Dialog
                 open={emptyRecDialog}
-            // onClose={emptyRecClose}
             >
                 <DialogTitle id="alert-dialog-title">{"Registro sem descrição ou já existente não pode ser gravado."}</DialogTitle>
                 <DialogContent>
@@ -806,19 +825,17 @@ const Location = props => {
 
             <Dialog
                 open={repeatedDialog}
-            // onClose={emptyRecClose}
             >
-                <DialogTitle id="alert-dialog-title">{"Já existente"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{"Endereço já cadastrado"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Deseja continuar?
+                        Clique no link abaixo apra acessar o registro ou no botão para continuar o cadastro.
                     </DialogContentText>
+                    <Link to={"/location/" + repeatedLocationId}>{repeatedLocationName}</Link>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => {
-                        repeatedDialogSet(false)
-                    }} color="primary" variant='contained'>
-                        Ok
+                    <Button onClick={() => { repeatedDialogSet(false) }} color="primary" size='small' variant='contained'>
+                        Continuar
                     </Button>
                 </DialogActions>
             </Dialog>
