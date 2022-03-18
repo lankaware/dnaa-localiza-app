@@ -10,13 +10,26 @@ import SearchIcon from '@mui/icons-material/Search'
 import { useStyles } from '../../services/stylemui'
 import { getList, putRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
-// import { dateBr } from '../../services/dateutils'
+import { prettyDate } from '../../services/dateutils'
 
 const objectRef = 'mktevent/'
 
 const CustomerList = props => {
 
     const columns = [
+        {
+            name: 'Data',
+            selector: row => row.date,
+            sortable: true,
+            width: '10vw',
+            cell: row => (<Link to={"/mktevent/" + row._id}>{prettyDate(row.date)}</Link>)
+        },
+        {
+            name: 'Empreendimento',
+            selector: row => row.reproject_name,
+            sortable: true,
+            width: '30vw',
+        },
         {
             name: 'Nome da Ação',
             selector: row => row.name,
@@ -47,7 +60,6 @@ const CustomerList = props => {
     useEffect(() => {
         getList(objectRef)
             .then(items => {
-                console.log('items.record',items.record)
                 setList(items.record)
             })
     }, [])

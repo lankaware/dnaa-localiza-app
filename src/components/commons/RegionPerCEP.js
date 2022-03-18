@@ -1,4 +1,5 @@
 export function regionPerCEP (CepArray) {
+    if (!CepArray[0]) return "Região não definida"
     let CEP = CepArray[0];
     let regionNum = CEP.substr(0,2);
     let regionName;

@@ -29,7 +29,6 @@ const Authentication = props => {
         recObj = JSON.stringify(recObj)
         postRec('loginlogin/' + login, recObj)
             .then(result => {
-                console.log('result.token', result.token)
                 if (!result.token) {
                     alert('Usuário ou login inválidos!')
                     return null

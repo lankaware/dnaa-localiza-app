@@ -12,6 +12,7 @@ import { getList, putRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
 
 const objectRef = 'location/'
+const profilePretty = ['$', '$$', '$$$', '$$$$', '$$$$$']
 
 const CustomerList = props => {
 
@@ -53,6 +54,7 @@ const CustomerList = props => {
             selector: row => row.profile,
             sortable: true,
             width: '10vw',
+            cell: row => { return profilePretty[row.profile - 1] }
         },
     ];
 
@@ -63,7 +65,6 @@ const CustomerList = props => {
     useEffect(() => {
         getList(objectRef)
             .then(items => {
-                console.log('items.record',items.record)
                 setList(items.record)
             })
     }, [])

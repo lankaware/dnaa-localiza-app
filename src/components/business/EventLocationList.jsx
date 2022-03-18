@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
-import { regionPerCEP } from '../commons/RegionPerCEP'
-
 import {
     Button, Box, Grid, TextField, Dialog, MenuItem, DialogTitle, DialogContent, DialogActions, FormControlLabel, Checkbox,
 } from '@mui/material'
+import ReactToPrint from "react-to-print"
+
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt'
 import SocialDistanceIcon from '@mui/icons-material/SocialDistance'
@@ -14,6 +14,8 @@ import EmailIcon from '@mui/icons-material/Email'
 import { useStyles } from '../../services/stylemui'
 import { deleteRec, getList, putRec, postRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
+import { regionPerCEP } from '../commons/RegionPerCEP'
+import ProposalLayout from './ProposalLayout'
 
 const objectRef = 'eventlocation/'
 const objectId = 'eventlocationid/'
@@ -21,7 +23,9 @@ const objectChild = 'eventlocationevent/'
 const objectPrevious = "mkteventprevious/"
 
 var currentItem = '0'
-var address = ''
+// var addressType = ''
+var fulladdress = ''
+// var number = ''
 var city = ''
 var state = ''
 var selectedToSave = []
@@ -49,7 +53,7 @@ const EventLocationList = props => {
             selector: row => row.location_zip,
             sortable: true,
             width: '10vw',
-            cell: row => {return regionPerCEP(row.location_zip)}
+            cell: row => { return regionPerCEP(row.location_zip) }
 
         },
         {
@@ -67,7 +71,7 @@ const EventLocationList = props => {
             right: true,
         },
         {
-            name: 'Selecionado Cliente',
+            name: 'Aprovado',
             selector: row => row.selected,
             width: '10vw',
             'data-tag': "allowRowEvents",
@@ -114,15 +118,20 @@ const EventLocationList = props => {
     const [locationId, locationIdSet] = useState('')
     const [locationZip, locationZipSet] = useState('')
     const [distance, distanceSet] = useState('')
-    const [disponibility, disponibilitySet] = useState('')
     const [selected, selectedSet] = useState(false)
     const [contracted, contractedSet] = useState(false)
+    const [disponibility, disponibilitySet] = useState('')
+    const [occupied, occupiedSet] = useState('')
 
     const [editDialog, editDialogSet] = useState(false)
     const [localSelectDialog, localSelectDialogSet] = useState(false)
     const [appUpdate, setAppUpdate] = useState(true)
     const [locationSelectList, locationSelectListSet] = useState([])
     const [recalcEnabled, recalcEnabledSet] = useState(false)
+    const [neighborFilter, neighborFilterSet] = useState('')
+
+    const [proposalPreview, proposalPreviewSet] = useState(false)
+    const proposalRef = useRef()
 
     useEffect(() => {
         if (mktEventId !== '0') {
@@ -143,7 +152,6 @@ const EventLocationList = props => {
         if (mktEventId === '0') {
             getList(objectPrevious + props.reprojectId)
                 .then(items => {
-                    console.log("previous items", items)
                     if (items) setList(items.record)
                 })
         }
@@ -153,23 +161,33 @@ const EventLocationList = props => {
         if (rowid !== '0') {
             getList(`${objectId}${rowid}`)
                 .then(items => {
-                    console.log(items)
                     _idSet(items.record._id || '')
                     locationIdSet(items.record.location_id || '')
                     locationZipSet(items.record.zip || '')
                     distanceSet(items.record.distance || 0)
-                    disponibilitySet(items.record.disponibility || '')
                     selectedSet(items.record.selected || false)
                     contractedSet(items.record.contracted || false)
+                    const locationIndex = locationList.findIndex((listItem) => {
+                        return listItem._id === items.record.location_id
+                    })
+                    console.log('locationList', locationList)
+                    console.log('items.record.location_id', items.record.location_id)
+                    console.log('locationIndex', locationIndex)
+                    if (locationIndex !== -1) {
+                        disponibilitySet(locationList[locationIndex].disponibility || '')
+                        occupiedSet(locationList[locationIndex].occupied || '')
+                    }
                 })
         } else {
             locationIdSet('')
             distanceSet(0)
             locationZipSet("")
-            disponibilitySet('')
             selectedSet(false)
             contractedSet(false)
+            disponibilitySet('')
+            occupiedSet('')
         }
+
         currentItem = rowid || '0'
         editDialogSet(true)
     }
@@ -187,13 +205,14 @@ const EventLocationList = props => {
         recObj = JSON.stringify(recObj)
         putRec('location/', recObj)
             .then(items => {
+                console.log('location', items)
                 items.record.map(item => {
                     // verficar se local já existe em enventLocation 
                     const alreadySelected = list.findIndex((listItem) => {
                         return listItem.location_id === item._id
                     })
                     if (alreadySelected !== -1) return null
-                    const localDest = `${item.address} ${item.city} ${item.state}`
+                    const localDest = `${item.fulladdress} ${item.city} ${item.state}`
                     const uri = `locationdistance/${localOrigin}/${localDest}`
                     getList(uri)
                         .then(result => {
@@ -238,7 +257,7 @@ const EventLocationList = props => {
     }
 
     const calcDistance = () => {
-        const localDest = `${address} ${city} ${state}`
+        const localDest = `${fulladdress} ${city} ${state}`
         const uri = `locationdistance/${localOrigin}/${localDest}`
         getList(uri)
             .then(result => {
@@ -285,7 +304,7 @@ const EventLocationList = props => {
     const handleLocationSelect = (evalue) => {
         locationIdSet(evalue)
         const currentLocation = locationList.findIndex((item) => { return item._id === evalue })
-        address = locationList[currentLocation].address
+        fulladdress = locationList[currentLocation].fulladdress
         city = locationList[currentLocation].city
         state = locationList[currentLocation].state
         recalcEnabledSet(true)
@@ -301,9 +320,8 @@ const EventLocationList = props => {
         return null
     }
 
-    const sendMessageSelected = (allSelected, selectedCount, selectedRows) => {
-        //selectedToSave = selectedRows
-        return null
+    const generateProposal = (allSelected, selectedCount, selectedRows) => {
+        proposalPreviewSet(true)
     }
 
     return (
@@ -344,8 +362,8 @@ const EventLocationList = props => {
                     BUSCAR POR PROXIMIDADE
                 </Button>
                 <Button color="secondary" size='small' variant='contained' startIcon={<EmailIcon />}
-                    disabled={mktEventId === '0'} onClick={sendMessageSelected} sx={{ 'margin': '0 10px' }}>
-                    ENVIAR MENSAGEM
+                    disabled={mktEventId === '0'} onClick={generateProposal} sx={{ 'margin': '0 10px' }}>
+                    GERAR PROPOSTA
                 </Button>
             </Box>
 
@@ -394,6 +412,21 @@ const EventLocationList = props => {
                     <div className='modal-form'>
                         <Grid container spacing={2} >
                             <Grid item xs={12}>
+                                <TextField
+                                    value={neighborFilter}
+                                    onChange={(event) => { neighborFilterSet(event.target.value) }}
+                                    id='neighborFilter'
+                                    label='Bairro de filtro'
+                                    fullWidth={true}
+                                    disabled={false}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    type='text'
+                                />
+                            </Grid>
+
+                            <Grid item xs={12}>
 
                                 <TextField
                                     id='location-select'
@@ -407,9 +440,12 @@ const EventLocationList = props => {
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     // sx={{ width: 150 }}             cell: row => { return profilePretty[row.location_profile - 1] }
                                     select>
-                                    {locationList.map((option) => (
-                                        <MenuItem key={option._id} value={option._id}>{`${option.name} / ${option.address} / ${option.neighborhood} - ${profilePretty[option.profile - 1]} `}</MenuItem>
-                                    ))}
+                                    {locationList.map((option) => {
+                                        if (neighborFilter && option.neighborhood !== neighborFilter) return null
+                                        return (
+                                            <MenuItem key={option._id} value={option._id}>{`${option.name} / ${option.fulladdress} / ${option.neighborhood} - ${profilePretty[option.profile - 1]} `}</MenuItem>
+                                        )
+                                    })}
                                 </TextField>
 
                             </Grid>
@@ -433,7 +469,7 @@ const EventLocationList = props => {
 
                             <Grid item xs={4}>
                                 <FormControlLabel
-                                    label="Selecionado Cliente?"
+                                    label="Aprovado?"
                                     control={
                                         <Checkbox
                                             checked={selected}
@@ -442,6 +478,40 @@ const EventLocationList = props => {
                                     }
                                 />
                             </Grid>
+
+                            <Grid item xs={12}>
+                                <TextField
+                                    value={disponibility}
+                                    onChange={(event) => { disponibilitySet(event.target.value) }}
+                                    id='disponibility'
+                                    label='Datas Disponíveis'
+                                    fullWidth={true}
+                                    disabled={false}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    type='text'
+                                    multiline
+                                    rows="2"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    value={occupied}
+                                    onChange={(event) => { occupiedSet(event.target.value) }}
+                                    id='occupied'
+                                    label='Datas Selecionadas'
+                                    fullWidth={true}
+                                    disabled={false}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    type='text'
+                                    multiline
+                                    rows="2"
+                                />
+                            </Grid>
+
                         </Grid>
                     </div>
                 </DialogContent>
@@ -457,6 +527,40 @@ const EventLocationList = props => {
                         CANCELAR
                     </Button>
                 </DialogActions>
+            </Dialog>
+
+            <Dialog
+                open={proposalPreview}
+                fullWidth={true}
+                maxWidth={'lg'}
+            >
+                <DialogTitle id="alert-dialog-title">{"Proposta Comercial"}</DialogTitle>
+                <DialogContent dividers>
+                    <ProposalLayout
+                        ref={proposalRef}
+                    />
+                </DialogContent>
+                <div className='data-bottom-margin'></div>
+                <div className='only-buttons'>
+                    <ReactToPrint className='button-link'
+                        trigger={() =>
+                            <Box m={1}>
+                                <Button variant='contained' size='small' color='primary' href="#">
+                                    Imprimir
+                                </Button>
+                            </Box>}
+                        content={() => proposalRef.current}
+                        onAfterPrint={() => { proposalPreviewSet(false) }}
+                        documentTitle={'Proposta Comercial'}
+                        pageStyle="@page { size: 5in 8in }"
+                    />
+                    <Box m={1}>
+                        <Button color='primary' variant='contained' size='small'
+                            onClick={_ => { proposalPreviewSet(false) }} disabled={false}>
+                            Fechar
+                        </Button>
+                    </Box>
+                </div>
             </Dialog>
 
         </div>

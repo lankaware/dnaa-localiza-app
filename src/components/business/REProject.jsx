@@ -85,15 +85,17 @@ const REProject = props => {
         if (id !== '0') {
             getList(objectId + _id)
                 .then(items => {
-                    console.log("reproject", items)
-                    nameSet(items.record.name || '')
-                    addressSet(items.record.address || '')
-                    neighborhoodSet(items.record.neighborhood || '')
-                    citySet(items.record.city || '')
-                    stateSet(items.record.state || '')
-                    zipSet(items.record.zip || '')
-                    redeveloperIdSet(items.record.reDeveloper_id || '')
-                    return items.record.reDeveloper_id
+                    console.log('items', items)
+                    nameSet(items.record[0].name || '')
+                    addressTypeSet(items.record[0].addressType || '')
+                    addressSet(items.record[0].address || '')
+                    numberSet(items.record[0].number || '')
+                    neighborhoodSet(items.record[0].neighborhood || '')
+                    citySet(items.record[0].city || '')
+                    stateSet(items.record[0].state || '')
+                    zipSet(items.record[0].zip || '')
+                    redeveloperIdSet(items.record[0].reDeveloper_id || '')
+                    return items.record[0].reDeveloper_id
                 })
                 .then(id => {
                     if (!id) return null
@@ -128,13 +130,14 @@ const REProject = props => {
         let recObj = {
             name,
             reDeveloper_id: redeveloperId,
+            addressType,
             address,
+            number,
             neighborhood,
             city,
             state,
             zip,
         }
-        console.log(recObj)
 
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)

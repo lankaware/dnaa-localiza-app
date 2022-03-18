@@ -25,7 +25,7 @@ const REProjectList = (props) => {
     },
     {
       name: 'Endereço',
-      selector: row => row.address,
+      selector: row => row.fulladdress,
       sortable: true,
       width: '30vw',
     },
@@ -37,7 +37,6 @@ const REProjectList = (props) => {
   useEffect(() => {
     getList(objectRef)
       .then(items => {
-        console.log('items.record', items.record)
         setList(items.record)
       })
   }, [])

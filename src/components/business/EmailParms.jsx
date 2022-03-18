@@ -33,7 +33,6 @@ const EmailParms = props => {
     useEffect(() => {
         getList(objectRef)
             .then(items => {
-                console.log('items.record', items.record)
                 _idSet(items.record[0]._id || '0')
                 requestTextSet(items.record[0].requestText || '')
                 emailHostSet(items.record[0].emailHost || '')
