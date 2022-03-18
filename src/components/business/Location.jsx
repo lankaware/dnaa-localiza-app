@@ -10,6 +10,9 @@ import {
 import ComboBoxLists from "../commons/ComboBoxLists.json"
 
 import { BsFillCircleFill } from "react-icons/bs";
+import { FcGoogle } from "react-icons/fc";
+import { FcPhotoReel } from "react-icons/fc";
+
 
 import EditIcon from '@mui/icons-material/Edit'
 import SaveAltIcon from '@mui/icons-material/SaveAlt'
@@ -78,6 +81,8 @@ const Location = props => {
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
 
+
+    const [openImage, openImageSet] = useState(false)
     const [deleteDialog, setDeleteDialog] = useState(false)
     const [deleteInfoDialog, setDeleteInfoDialog] = useState(false)
     const [emptyRecDialog, setEmptyRecDialog] = useState(false)
@@ -242,7 +247,7 @@ const Location = props => {
             return (
                 <Box sx={{ width: '100%', height: '100%' }}>
                     <Box sx={{ width: '98%', height: '98%' }}>
-                        <img src={photo} alt="" width="100%" />
+                        <img src={photo} onClick={() => openImageSet(true)} alt="" width="100%" />
                     </Box>
                 </Box>)
         } else {
@@ -276,9 +281,7 @@ const Location = props => {
     }
 
     const selectMap = (array) => {
-        console.log(array);
         array.map((el, i) => {
-            console.log("el", el, i)
             return <MenuItem value={el}> el </MenuItem>
         })
     }
@@ -332,11 +335,15 @@ const Location = props => {
                                             onChange={resizeAndSet}
                                             type="file"
                                         />
-                                        <Button sx={{ margin: 1 }} variant='contained' component="span" disabled={!editMode}>
+                                        <Button sx={{ mt: 1 }} variant='contained' startIcon={<FcPhotoReel />} component="span" disabled={!editMode}>
                                             {/* onClick={reziseAndSet}> */}
-                                            Adicionar Foto
+                                            Ad. Foto
                                         </Button>
                                     </label>
+                                    <Button sx={{ mt: 1, ml: 1 }} variant='outlined' component="span" startIcon={<FcGoogle />} disabled={editMode}
+                                        onClick={() => (window.open(`https://www.google.com/search?q=${type}+${name.split(' ').join('+')}+${addressType}+${address.split(' ').join('+')}+${number}`))}>
+                                        Pesquisar
+                                    </Button>
                                 </Box>
                             </Grid>
                         </Grid>
@@ -756,6 +763,10 @@ const Location = props => {
 
             </Form>
 
+            <Dialog open={openImage}>
+                <img src={photo} onClick={() => openImageSet(false)} alt="" width="100%" />
+            </Dialog>
+
             <Dialog
                 open={deleteDialog}
             // onClose={delCancel}
@@ -792,6 +803,7 @@ const Location = props => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
 
             <Dialog
                 open={emptyRecDialog}

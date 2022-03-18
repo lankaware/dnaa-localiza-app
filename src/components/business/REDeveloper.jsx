@@ -59,7 +59,7 @@ const REDeveloper = props => {
             width: '10vw',
             cell: row => (<div>{dateBr(row.date)}</div>)
         },
-    
+
     ];
 
 
@@ -69,6 +69,7 @@ const REDeveloper = props => {
     const [name, nameSet] = useState('')
     const [tradeName, tradeNameSet] = useState('')
     const [email, emailSet] = useState('')
+    const [fee, feeSet] = useState('')
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -93,6 +94,7 @@ const REDeveloper = props => {
                     nameSet(items.record.name || '')
                     tradeNameSet(items.record.name || '')
                     emailSet(items.record.email || '')
+                    feeSet(items.record.fee || '')
 
                 })
             getList('reprojectperdeveloper/' + _id)
@@ -100,13 +102,13 @@ const REDeveloper = props => {
                     console.log('items.record', items.record)
                     projectListSet(items.record)
                 })
-                getList('mkteventperdeveloper/' + _id)
+            getList('mkteventperdeveloper/' + _id)
                 .then(items => {
                     console.log('items.record', items.record)
                     eventListSet(items.record)
                 })
         }
-        
+
         setRecUpdated(true)
     }, [id, recUpdated])
 
@@ -120,6 +122,7 @@ const REDeveloper = props => {
             name,
             tradeName,
             email,
+            fee,
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
@@ -243,6 +246,20 @@ const REDeveloper = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
+                    <Grid item xs={3}>
+                        <TextField
+                            value={fee}
+                            onChange={(event) => { feeSet(event.target.value) }}
+                            id='fee'
+                            label='Taxa FEE'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                            inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
                 </Grid>
             </div>
             <Form className='data-form-level1'>
@@ -292,7 +309,7 @@ const REDeveloper = props => {
                     </TabPanel>
                     <TabPanel value={tabValue} index={1} dir={theme.direction}>
                         <div >
-                        <DataTable
+                            <DataTable
                                 // title=""
                                 noHeader={true}
                                 columns={eventColumns}
