@@ -393,7 +393,7 @@ const Location = props => {
                             <Grid item xs={7}>
                                 <TextField
                                     value={name}
-                                    onChange={(event) => { nameSet(event.target.value.toUpperCase()) }}
+                                    onChange={(event) => { nameSet(event.target.value) }}
                                     id='name'
                                     label='Nome do Local'
                                     fullWidth={true}

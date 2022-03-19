@@ -1,29 +1,12 @@
 {
     "AddressTypeList": [
-        "Aeroporto",
         "Alameda",
         "Avenida",
-        "Campo",
-        "Condomínio",
-        "Conjunto",
-        "Distrito",
-        "Estação",
         "Estrada",
-        "Jardim",
-        "Ladeira",
         "Largo",
-        "Parque",
-        "Pátio",
         "Praça",
-        "Quadra",
-        "Residencial",
         "Rodovia",
-        "Rua",
-        "Sítio",
-        "Travessa",
-        "Vale",
-        "Via",
-        "Vila"
+        "Rua"
     ],
     "TypeOfLocation" : [
         "Padaria",
@@ -31,6 +14,8 @@
         "Mercado",
         "Stand",
         "Loja",
-        "Restaurante"
+        "Restaurante",
+        "Bar",
+        ""
     ]
 }
