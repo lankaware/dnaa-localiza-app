@@ -67,7 +67,6 @@ const REDeveloper = props => {
 
     const [_id, _idSet] = useState(id)
     const [name, nameSet] = useState('')
-    const [tradeName, tradeNameSet] = useState('')
     const [email, emailSet] = useState('')
     const [fee, feeSet] = useState('')
 
@@ -92,7 +91,6 @@ const REDeveloper = props => {
             getList(objectId + _id)
                 .then(items => {
                     nameSet(items.record.name || '')
-                    tradeNameSet(items.record.name || '')
                     emailSet(items.record.email || '')
                     feeSet(items.record.fee || '')
 
@@ -118,7 +116,6 @@ const REDeveloper = props => {
         }
         let recObj = {
             name,
-            tradeName,
             email,
             fee,
         }
@@ -215,21 +212,6 @@ const REDeveloper = props => {
                             size='small'
                         />
                     </Grid>
-                    <Grid item xs={5}>
-                        <TextField
-                            value={tradeName}
-                            onChange={(event) => { tradeNameSet(event.target.value) }}
-                            id='tradeName'
-                            label='Razão Social'
-                            fullWidth={true}
-                            disabled={!insertMode}
-                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
-                            variant='outlined'
-                            size='small'
-                        />
-                    </Grid>
-
-
                     <Grid item xs={5}>
                         <TextField
                             value={email}

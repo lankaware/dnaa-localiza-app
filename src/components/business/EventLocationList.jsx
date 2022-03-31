@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import {
@@ -15,6 +15,10 @@ import { useStyles } from '../../services/stylemui'
 import { deleteRec, getList, putRec, postRec } from '../../services/apiconnect'
 import { customStyles1, paginationBr } from '../../services/datatablestyle'
 import { regionPerCEP } from '../commons/RegionPerCEP'
+import { defaultDateBr, prettyDate } from '../../services/dateutils'
+import { Context } from '../../context/AuthContext'
+
+
 import ProposalLayout from './ProposalLayout'
 
 const objectRef = 'eventlocation/'
@@ -47,6 +51,8 @@ const EventLocationList = props => {
             selector: row => row.location_address,
             sortable: true,
             width: '15vw',
+            cell: row => { return `${row.location_address_type} ${row.location_address}, ${row.location_number}` }
+
         },
         {
             name: 'Região',
@@ -92,6 +98,8 @@ const EventLocationList = props => {
             sortable: true,
             width: '7vw',
             right: true,
+            cell: row => { return (row.distance) === 0 ? row.distance : <Button>Calcular</Button> }
+
         },
         {
             name: 'CEP',
@@ -122,13 +130,26 @@ const EventLocationList = props => {
     const [contracted, contractedSet] = useState(false)
     const [disponibility, disponibilitySet] = useState('')
     const [occupied, occupiedSet] = useState('')
+    const [name, nameSet] = useState('')
+    const [dayValue, dayValueSet] = useState('')
+    const [weekendValue, weekendValueSet] = useState('')
+    const [fifteenValue, fifteenValueSet] = useState('')
+    const [monthValue, monthValueSet] = useState('')
+    const [otherValues, otherValuesSet] = useState('')
+    const [updatedBy, updatedBySet] = useState('')
+
+
+    const { username } = useContext(Context);
+    const dateChanged = prettyDate(defaultDateBr())
+
+
 
     const [editDialog, editDialogSet] = useState(false)
     const [localSelectDialog, localSelectDialogSet] = useState(false)
     const [appUpdate, setAppUpdate] = useState(true)
     const [locationSelectList, locationSelectListSet] = useState([])
     const [recalcEnabled, recalcEnabledSet] = useState(false)
-    const [neighborFilter, neighborFilterSet] = useState('')
+    const [neighborFilter, neighborFilterSet] = useState("")
 
     const [proposalPreview, proposalPreviewSet] = useState(false)
     const proposalRef = useRef()
@@ -137,16 +158,19 @@ const EventLocationList = props => {
         if (mktEventId !== '0') {
             getList(objectChild + mktEventId)
                 .then(items => {
+                    console.log("eventlocationevent", items.record)
                     if (items) setList(items.record)
                 })
         }
+        setAppUpdate(true)
+    }, [mktEventId, appUpdate]) // appUpdate retirado para teste
+
+    useEffect(() => {
         getList('location/')
             .then(items => {
                 locationListSet(items.record)
             })
-
-        setAppUpdate(true)
-    }, [mktEventId, appUpdate])
+    }, [mktEventId])
 
     useEffect(() => {
         if (mktEventId === '0') {
@@ -158,41 +182,37 @@ const EventLocationList = props => {
     }, [props.reprojectId])
 
     const editOpen = (rowid) => {
-        if (rowid !== '0') {
-            getList(`${objectId}${rowid}`)
-                .then(items => {
-                    _idSet(items.record._id || '')
-                    locationIdSet(items.record.location_id || '')
-                    locationZipSet(items.record.zip || '')
-                    distanceSet(items.record.distance || 0)
-                    selectedSet(items.record.selected || false)
-                    contractedSet(items.record.contracted || false)
-                    const locationIndex = locationList.findIndex((listItem) => {
-                        return listItem._id === items.record.location_id
+        getList(`${objectId}${rowid}`)
+            .then(items => {
+                _idSet(items.record._id || '')
+                locationIdSet(items.record.location_id || '')
+                locationZipSet(items.record.zip || '')
+                distanceSet(items.record.distance || 0)
+                selectedSet(items.record.selected || false)
+                contractedSet(items.record.contracted || false)
+                return items.record.location_id;
+            }).then(actualLocationId => {
+                // (locationId) {
+                getList(`locationsummed/${actualLocationId}`)
+                    .then(items => {
+                        nameSet(items.record[0].name || "")
+                        dayValueSet(items.record[0].dayValue || 0)
+                        weekendValueSet(items.record[0].weekendValue || 0)
+                        fifteenValueSet(items.record[0].fifteenValue || 0)
+                        monthValueSet(items.record[0].monthValue || 0)
+                        otherValuesSet(items.record[0].otherValues || "")
+                        disponibilitySet(items.record[0].disponibility || "")
+                        occupiedSet(items.record[0].occupied || "")
+                        updatedBySet(items.record[0].updatedBy || "")
+                    }).then(() => {
+                        editDialogSet(true)
                     })
-                    console.log('locationList', locationList)
-                    console.log('items.record.location_id', items.record.location_id)
-                    console.log('locationIndex', locationIndex)
-                    if (locationIndex !== -1) {
-                        disponibilitySet(locationList[locationIndex].disponibility || '')
-                        occupiedSet(locationList[locationIndex].occupied || '')
-                    }
-                })
-        } else {
-            locationIdSet('')
-            distanceSet(0)
-            locationZipSet("")
-            selectedSet(false)
-            contractedSet(false)
-            disponibilitySet('')
-            occupiedSet('')
-        }
-
+                // }
+            })
         currentItem = rowid || '0'
-        editDialogSet(true)
     }
 
-    const localSelectOpen = () => {
+    const loadLocalSelect = () => {
         var locationListTemp = []
         let recObj = {
             '$and': [
@@ -205,32 +225,41 @@ const EventLocationList = props => {
         recObj = JSON.stringify(recObj)
         putRec('location/', recObj)
             .then(items => {
-                console.log('location', items)
+                let x = items.record
+                console.log({ x })
                 items.record.map(item => {
-                    // verficar se local já existe em enventLocation 
+                    // verficar se local já existe em eventLocation 
                     const alreadySelected = list.findIndex((listItem) => {
                         return listItem.location_id === item._id
                     })
                     if (alreadySelected !== -1) return null
+                    console.log({item, neighborFilter})
+                    if (neighborFilter && item.neighborhood == neighborFilter) return null
                     const localDest = `${item.fulladdress} ${item.city} ${item.state}`
                     const uri = `locationdistance/${localOrigin}/${localDest}`
-                    getList(uri)
-                        .then(result => {
-                            let line = {
-                                name: item.name,
-                                zip: item.zip,
-                                profile: item.profile,
-                                distance: result.distance,
-                                locationId: item._id,
-                                disponibility: item.disponibility,
-                            }
-                            locationListTemp = [...locationListTemp, line]
-                            locationSelectListSet(locationListTemp)
-                        })
-                    return null
+                    // getList(uri)
+                    //     .then(result => {
+                    let line = {
+                        name: item.name,
+                        zip: item.zip,
+                        profile: item.profile,
+                        // distance: result.distance,
+                        locationId: item._id,
+                        disponibility: item.disponibility,
+                    }
+                    locationListTemp = [...locationListTemp, line]
+                    locationSelectListSet(locationListTemp)
+                    // } )
+
                 })
-                localSelectDialogSet(true)
             })
+    }
+
+    const localSelectOpen = () => {
+        loadLocalSelect();
+        console.log({ locationSelectList })
+        localSelectDialogSet(true)
+        return null
     }
 
     const editConfirm = () => {
@@ -238,13 +267,26 @@ const EventLocationList = props => {
             event_id: mktEventId,
             location_id: locationId,
             distance,
-            disponibility,
             selected,
-            contracted,
         }
+
+        let recLocObj = {
+            name,
+            dayValue,
+            weekendValue,
+            fifteenValue,
+            monthValue,
+            otherValues,
+            disponibility,
+            occupied,
+            updatedBy,
+        }
+
         if (currentItem !== '0') {
             recObj = JSON.stringify(recObj);
             putRec(objectId + _id, recObj)
+            recLocObj = JSON.stringify(recLocObj)
+            putRec("locationid/" + locationId, recLocObj)
         } else {
             recObj = JSON.stringify(recObj);
             postRec(objectRef, recObj)
@@ -353,10 +395,10 @@ const EventLocationList = props => {
                 />
             </div>
             <Box m={1} >
-                <Button color="warning" size='small' variant='contained' startIcon={<OpenInNewIcon />}
+                {/* <Button color="warning" size='small' variant='contained' startIcon={<OpenInNewIcon />}
                     disabled={mktEventId === '0'} onClick={_ => editOpen('0')} sx={{ 'margin': '0 10px' }}>
                     INCLUIR LOCAL
-                </Button>
+                </Button> */}
                 <Button color="success" size='small' variant='contained' startIcon={<AddLocationAltIcon />}
                     disabled={mktEventId === '0'} onClick={localSelectOpen} sx={{ 'margin': '0 10px' }}>
                     BUSCAR POR PROXIMIDADE
@@ -372,6 +414,19 @@ const EventLocationList = props => {
                 {/* <p/> */}
                 <DialogContent dividers>
                     <div className='modal-form'>
+                        <TextField
+                            value={neighborFilter}
+                            onChange={(event) => { neighborFilterSet(event.target.value) }}
+                            onBlur={(event) => { loadLocalSelect() }}
+                            id='neighborFilter'
+                            label='Bairro de filtro'
+                            fullWidth={true}
+                            disabled={false}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                            type='text'
+                        />
                         <DataTable
                             // title=""
                             noHeader={true}
@@ -411,7 +466,7 @@ const EventLocationList = props => {
                 <DialogContent dividers>
                     <div className='modal-form'>
                         <Grid container spacing={2} >
-                            <Grid item xs={12}>
+                            {/* <Grid item xs={12}>
                                 <TextField
                                     value={neighborFilter}
                                     onChange={(event) => { neighborFilterSet(event.target.value) }}
@@ -424,29 +479,22 @@ const EventLocationList = props => {
                                     size='small'
                                     type='text'
                                 />
-                            </Grid>
+                            </Grid> */}
 
                             <Grid item xs={12}>
 
                                 <TextField
                                     id='location-select'
                                     label='Local'
-                                    value={locationId}
-                                    onChange={(event) => { handleLocationSelect(event.target.value) }}
+                                    value={name}
+                                    // onChange={(event) => { handleLocationSelect(event.target.value) }}
                                     size='small'
                                     fullWidth={true}
-                                    // disabled={!editMode}
+                                    disabled={true}
                                     type='text'
                                     InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                                     // sx={{ width: 150 }}             cell: row => { return profilePretty[row.location_profile - 1] }
-                                    select>
-                                    {locationList.map((option) => {
-                                        if (neighborFilter && option.neighborhood !== neighborFilter) return null
-                                        return (
-                                            <MenuItem key={option._id} value={option._id}>{`${option.name} / ${option.fulladdress} / ${option.neighborhood} - ${profilePretty[option.profile - 1]} `}</MenuItem>
-                                        )
-                                    })}
-                                </TextField>
+                                    TextField />
 
                             </Grid>
                             <Grid item xs={4}>
@@ -466,8 +514,8 @@ const EventLocationList = props => {
                             <Button color='primary' size='large' id='searchButton' startIcon={<SocialDistanceIcon />}
                                 onClick={_ => calcDistance()} disabled={!recalcEnabled}>
                             </Button>
-
-                            <Grid item xs={4}>
+                            <Grid item xs={2}></Grid>
+                            <Grid item xs={3}>
                                 <FormControlLabel
                                     label="Aprovado?"
                                     control={
@@ -476,6 +524,84 @@ const EventLocationList = props => {
                                             onChange={(event) => { selectedSet(event.target.checked) }}
                                         />
                                     }
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <TextField
+                                    value={(parseFloat(dayValue).toFixed(2))}
+                                    onChange={(event) => { dayValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
+                                    id='dayValue'
+                                    label='Valor diária durante semana'
+                                    fullWidth={true}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    inputProps={{ type: 'number' }}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <TextField
+                                    value={(parseFloat(weekendValue).toFixed(2))}
+                                    onChange={(event) => { weekendValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
+                                    id='weekendValue'
+                                    label='Valor diária final de semana'
+                                    fullWidth={true}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    inputProps={{ type: 'number' }}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <TextField
+                                    value={(parseFloat(fifteenValue).toFixed(2))}
+                                    onChange={(event) => { fifteenValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
+                                    id='fifteenValue'
+                                    label='Valor Quinzenal'
+                                    fullWidth={true}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    inputProps={{ type: 'number' }}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <TextField
+                                    value={(parseFloat(monthValue).toFixed(2))}
+                                    onChange={(event) => { monthValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
+                                    id='monthValue'
+                                    label='Valor Mensal'
+                                    fullWidth={true}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                    inputProps={{ type: 'number' }}
+                                />
+                            </Grid>
+                            <Grid item xs={8}>
+                                <TextField
+                                    value={otherValues}
+                                    onChange={(event) => { otherValuesSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
+                                    id='otherValues'
+                                    label='Outros Valores/Media Kit'
+                                    fullWidth={true}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                // inputProps={{ type: 'number' }}
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <TextField
+                                    value={updatedBy}
+                                    id='lastUpdated'
+                                    label='Última atualização'
+                                    fullWidth={true}
+                                    disabled={true}
+                                    InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                                    variant='outlined'
+                                    size='small'
+                                // inputProps={{ type: 'number' }}
                                 />
                             </Grid>
 

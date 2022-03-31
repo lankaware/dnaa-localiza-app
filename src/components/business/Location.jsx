@@ -136,9 +136,8 @@ const Location = props => {
                     setEditMode(false)
                 })
         } else {
-            getList('location/')
+            getList('locationrepeated/')
                 .then(items => {
-                    console.log('items', items)
                     repeatListSet(items.record)
                 })
         }
@@ -237,13 +236,15 @@ const Location = props => {
     }
 
     const resizeAndSet = async (e) => {
-        let file = e.target.files[0];
-        const base64 = await convertToBase64(file);
-        if (base64.length > 100000) {
-            alert("A imagem deve ter no máximo 70k.")
-            return null
+        if (editMode) {
+            let file = e.target.files[0];
+            const base64 = await convertToBase64(file);
+            if (base64.length > 100000) {
+                alert("A imagem deve ter no máximo 70k.")
+                return null
+            }
+            photoSet(base64);
         }
-        photoSet(base64);
     };
 
     const containPhoto = (photo) => {
@@ -346,13 +347,13 @@ const Location = props => {
                                             Ad. Foto
                                         </Button>
                                     </label>
-                                    <Button sx={{ mt: 1, ml: 1 }} variant='outlined' component="span" startIcon={<FcGoogle />} disabled={editMode}
+                                    <Button sx={{ mt: 1, ml: 1 }} variant='outlined' component="span" startIcon={<FcGoogle />}
                                         onClick={() => (window.open(`https://www.google.com/search?q=${type}+${name.split(' ').join('+')}+${addressType}+${address.split(' ').join('+')}+${number}`))}>
                                         Pesquisar
                                     </Button>
                                 </Box>
                             </Grid>
-                        </Grid>
+                        </Grid>,
                     </Grid>
                     <Grid item xs={9}>
                         <Grid container spacing={2} >
@@ -368,8 +369,9 @@ const Location = props => {
                                     variant='outlined'
                                     size='small'
                                     select>
-                                    <MenuItem key={0} value={false}><BsFillCircleFill color="green" /></MenuItem>
-                                    <MenuItem key={1} value={true}><BsFillCircleFill color="red" /></MenuItem>
+                                    <MenuItem key={0} value={"false"}><BsFillCircleFill color="green" /></MenuItem>
+                                    <MenuItem key={1} value={"true"}><BsFillCircleFill color="red" /></MenuItem>
+                                    <MenuItem key={2} value={"closed"}><BsFillCircleFill color="yellow" /></MenuItem>
                                 </TextField>
                             </Grid>
                             <Grid item xs={3}>
@@ -635,7 +637,7 @@ const Location = props => {
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            value={dayValue}
+                            value={(parseFloat(dayValue).toFixed(2))}
                             onChange={(event) => { dayValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='dayValue'
                             label='Valor diária durante semana'
@@ -649,7 +651,7 @@ const Location = props => {
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            value={weekendValue}
+                            value={(parseFloat(weekendValue).toFixed(2))}
                             onChange={(event) => { weekendValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='weekendValue'
                             label='Valor diária final de semana'
@@ -663,7 +665,7 @@ const Location = props => {
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            value={fifteenValue}
+                            value={(parseFloat(fifteenValue).toFixed(2))}
                             onChange={(event) => { fifteenValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='fifteenValue'
                             label='Valor Quinzenal'
@@ -677,7 +679,7 @@ const Location = props => {
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            value={monthValue}
+                            value={(parseFloat(monthValue).toFixed(2))}
                             onChange={(event) => { monthValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='monthValue'
                             label='Valor Mensal'
@@ -843,7 +845,7 @@ const Location = props => {
                 <DialogTitle id="alert-dialog-title">{"Endereço já cadastrado"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Clique no link abaixo apra acessar o registro ou no botão para continuar o cadastro.
+                        Clique no link abaixo para acessar o registro ou no botão para continuar o cadastro.
                     </DialogContentText>
                     <Link to={"/location/" + repeatedLocationId}>{repeatedLocationName}</Link>
                 </DialogContent>

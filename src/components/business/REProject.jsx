@@ -48,6 +48,7 @@ const REProject = props => {
 
     const [_id, _idSet] = useState(id)
     const [name, nameSet] = useState('')
+    const [tradeName, tradeNameSet] = useState('')
     const [addressType, addressTypeSet] = useState('')
     const [address, addressSet] = useState('')
     const [number, numberSet] = useState('')
@@ -87,6 +88,7 @@ const REProject = props => {
                 .then(items => {
                     console.log('items', items)
                     nameSet(items.record[0].name || '')
+                    tradeNameSet(items.record[0].tradeName || '')
                     addressTypeSet(items.record[0].addressType || '')
                     addressSet(items.record[0].address || '')
                     numberSet(items.record[0].number || '')
@@ -129,6 +131,7 @@ const REProject = props => {
         }
         let recObj = {
             name,
+            tradeName,
             reDeveloper_id: redeveloperId,
             addressType,
             address,
@@ -255,6 +258,19 @@ const REProject = props => {
                             size='small'
                         />
                     </Grid>
+                    <Grid item xs={5}>
+                        <TextField
+                            value={tradeName}
+                            onChange={(event) => { tradeNameSet(event.target.value) }}
+                            id='tradeName'
+                            label='Razão Social'
+                            fullWidth={true}
+                            disabled={!insertMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        />
+                    </Grid>
                     <Grid item xs={2}>
                         <TextField
                             value={addressType}
@@ -368,7 +384,7 @@ const REProject = props => {
                             value={phone}
                             onChange={(event) => { phoneSet(event.target.value) }}
                             id='phone'
-                            label='Fone'
+                            label='Telefone Plantão'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
