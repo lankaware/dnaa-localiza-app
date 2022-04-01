@@ -9,13 +9,12 @@
         "Rua"
     ],
     "TypeOfLocation" : [
-        "Padaria",
-        "Shopping",
-        "Mercado",
-        "Stand",
-        "Loja",
-        "Restaurante",
-        "Bar",
-        ""
+        "PADARIA",
+        "SHOPPING",
+        "MERCADO",
+        "STAND",
+        "LOJA",
+        "RESTAURANTE",
+        "BAR"
     ]
 }

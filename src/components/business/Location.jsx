@@ -79,6 +79,7 @@ const Location = props => {
     const [unavailable, unavailableSet] = useState(false)
     const [updatedBy, updatedBySet] = useState('')
     const [history, historySet] = useState([]);
+    const [bankInfo, bankInfoSet] = useState([]);
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -131,6 +132,7 @@ const Location = props => {
                     otherValuesSet(items.record.otherValues || '')
                     unavailableSet(items.record.unavailable || '')
                     updatedBySet(items.record.updatedBy || '')
+                    bankInfoSet(items.record.bankInfo || '')
                     repeatedDialogSet(false)
                     setInsertMode(false)
                     setEditMode(false)
@@ -177,6 +179,7 @@ const Location = props => {
             otherValues,
             unavailable,
             updatedBy,
+            bankInfo,
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
@@ -376,7 +379,7 @@ const Location = props => {
                             </Grid>
                             <Grid item xs={3}>
                                 <TextField
-                                    value={type}
+                                    value={type.toUpperCase()}
                                     onChange={(event) => { typeSet(event.target.value) }}
                                     id='type'
                                     label='Tipo do Local'
@@ -592,7 +595,7 @@ const Location = props => {
                             value={operatingHours}
                             onChange={(event) => { operatingHoursSet(event.target.value) }}
                             id='operatingHours'
-                            label='Horário de Funcionamento'
+                            label='Horário da Ação'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
@@ -727,6 +730,22 @@ const Location = props => {
                             onChange={(event) => { occupiedSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='occupied'
                             label='Datas Selecionadas'
+                            fullWidth={true}
+                            disabled={!editMode}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                            multiline
+                            rows="2"
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            value={bankInfo}
+                            onChange={(event) => { bankInfoSet(event.target.value)}}
+                            id='bankInfo'
+                            label='Dados Bancários'
                             fullWidth={true}
                             disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}

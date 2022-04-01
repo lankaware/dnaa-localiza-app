@@ -98,7 +98,11 @@ const EventLocationList = props => {
             sortable: true,
             width: '7vw',
             right: true,
-            cell: row => { return (row.distance) === 0 ? row.distance : <Button>Calcular</Button> }
+            cell: row => {
+                return (row.distance) === 0 ? row.distance : <Button color='primary' size='large' id='searchButton' startIcon={<SocialDistanceIcon />}
+                    onClick={_ => { console.log(row); calcDistance(row.localDest, row.index) }}>
+                </Button>
+            }
 
         },
         {
@@ -227,22 +231,24 @@ const EventLocationList = props => {
             .then(items => {
                 let x = items.record
                 console.log({ x })
-                items.record.map(item => {
+                items.record.map((item, index) => {
                     // verficar se local já existe em eventLocation 
                     const alreadySelected = list.findIndex((listItem) => {
                         return listItem.location_id === item._id
                     })
                     if (alreadySelected !== -1) return null
-                    console.log({item, neighborFilter})
+                    console.log({ item, neighborFilter })
                     if (neighborFilter && item.neighborhood == neighborFilter) return null
                     const localDest = `${item.fulladdress} ${item.city} ${item.state}`
                     const uri = `locationdistance/${localOrigin}/${localDest}`
                     // getList(uri)
                     //     .then(result => {
                     let line = {
+                        index: index,
                         name: item.name,
                         zip: item.zip,
                         profile: item.profile,
+                        localDest: `${item.fulladdress} ${item.city} ${item.state}`,
                         // distance: result.distance,
                         locationId: item._id,
                         disponibility: item.disponibility,
@@ -257,7 +263,6 @@ const EventLocationList = props => {
 
     const localSelectOpen = () => {
         loadLocalSelect();
-        console.log({ locationSelectList })
         localSelectDialogSet(true)
         return null
     }
@@ -298,14 +303,16 @@ const EventLocationList = props => {
         editDialogSet(false)
     }
 
-    const calcDistance = () => {
-        const localDest = `${fulladdress} ${city} ${state}`
+    const calcDistance = (localDest, index) => {
         const uri = `locationdistance/${localOrigin}/${localDest}`
-        getList(uri)
+        let localDistance = getList(uri)
             .then(result => {
-                const distance = result.distance
-                distanceSet(distance)
-                recalcEnabledSet(false)
+                return result.distance;
+            })
+            locationSelectList.map(e => {
+                if(e.index == index) {
+                    e.distance = 1 // localDistance;
+                }
             })
     }
 
@@ -511,9 +518,9 @@ const EventLocationList = props => {
                                     type='number'
                                 />
                             </Grid>
-                            <Button color='primary' size='large' id='searchButton' startIcon={<SocialDistanceIcon />}
+                            {/* <Button color='primary' size='large' id='searchButton' startIcon={<SocialDistanceIcon />}
                                 onClick={_ => calcDistance()} disabled={!recalcEnabled}>
-                            </Button>
+                            </Button> */}
                             <Grid item xs={2}></Grid>
                             <Grid item xs={3}>
                                 <FormControlLabel
