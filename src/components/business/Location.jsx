@@ -5,8 +5,9 @@ import { Form } from 'reactstrap';
 import DataTable from 'react-data-table-component'
 import {
     Grid, TextField, Typography, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Box,
-    AppBar, Tabs, Tab, MenuItem, Input, Divider
+    AppBar, Tabs, Tab, MenuItem, Input, Divider, InputAdornment
 } from '@mui/material'
+// import CurrencyTextField from '@unicef/material-ui-currency-textfield'
 
 import ComboBoxLists from "../commons/ComboBoxLists.json"
 
@@ -125,10 +126,11 @@ const Location = props => {
                     occupiedSet(items.record.occupied || '')
                     operatingHoursSet(items.record.operatingHours || '')
                     capacitySet(items.record.capacity || '')
-                    dayValueSet(items.record.dayValue || '')
-                    weekendValueSet(items.record.weekendValue || '')
-                    fifteenValueSet(items.record.fifteenValue || '')
-                    monthValueSet(items.record.monthValue || '')
+                    // dayValueSet(items.record.dayValue || '')
+                    dayValueSet(parseFloat(items.record.dayValue).toFixed(2).toString() || '')
+                    weekendValueSet(parseFloat(items.record.weekendValue).toFixed(2).toString() || '')
+                    fifteenValueSet(parseFloat(items.record.fifteenValue).toFixed(2).toString() || '')
+                    monthValueSet(parseFloat(items.record.monthValue).toFixed(2).toString() || '')
                     otherValuesSet(items.record.otherValues || '')
                     unavailableSet(items.record.unavailable || '')
                     updatedBySet(items.record.updatedBy || '')
@@ -639,8 +641,22 @@ const Location = props => {
                         </TextField>
                     </Grid>
                     <Grid item xs={2}>
+                        {/* <CurrencyTextField
+                            label="Valor diária durante semana"
+                            variant="outlined"
+                            value={dayValue}
+                            currencySymbol="R$"
+                            //minimumValue="0"
+                            outputFormat="number"
+                            decimalCharacter=","
+                            digitGroupSeparator="."
+                            onChange={(event) => { dayValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
+                            disabled={!editMode}
+                            size='small'
+                        /> */}
+
                         <TextField
-                            value={(parseFloat(dayValue).toFixed(2))}
+                            value={dayValue}
                             onChange={(event) => { dayValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='dayValue'
                             label='Valor diária durante semana'
@@ -650,11 +666,13 @@ const Location = props => {
                             variant='outlined'
                             size='small'
                             inputProps={{ type: 'number' }}
+                            onBlur={(event) => { dayValueSet(parseFloat(event.target.value).toFixed(2).toString()) }}
+                            InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
                         />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            value={(parseFloat(weekendValue).toFixed(2))}
+                            value={weekendValue}
                             onChange={(event) => { weekendValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='weekendValue'
                             label='Valor diária final de semana'
@@ -664,11 +682,13 @@ const Location = props => {
                             variant='outlined'
                             size='small'
                             inputProps={{ type: 'number' }}
+                            onBlur={(event) => { weekendValueSet(parseFloat(event.target.value).toFixed(2).toString()) }}
+                            InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
                         />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            value={(parseFloat(fifteenValue).toFixed(2))}
+                            value={fifteenValue}
                             onChange={(event) => { fifteenValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='fifteenValue'
                             label='Valor Quinzenal'
@@ -678,11 +698,13 @@ const Location = props => {
                             variant='outlined'
                             size='small'
                             inputProps={{ type: 'number' }}
+                            onBlur={(event) => { fifteenValueSet(parseFloat(event.target.value).toFixed(2).toString()) }}
+                            InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
                         />
                     </Grid>
                     <Grid item xs={2}>
                         <TextField
-                            value={(parseFloat(monthValue).toFixed(2))}
+                            value={monthValue}
                             onChange={(event) => { monthValueSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
                             id='monthValue'
                             label='Valor Mensal'
@@ -692,6 +714,8 @@ const Location = props => {
                             variant='outlined'
                             size='small'
                             inputProps={{ type: 'number' }}
+                            onBlur={(event) => { monthValueSet(parseFloat(event.target.value).toFixed(2).toString()) }}
+                            InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
                         />
                     </Grid>
                     <Grid item xs={4}>
@@ -743,7 +767,7 @@ const Location = props => {
                     <Grid item xs={6}>
                         <TextField
                             value={bankInfo}
-                            onChange={(event) => { bankInfoSet(event.target.value)}}
+                            onChange={(event) => { bankInfoSet(event.target.value) }}
                             id='bankInfo'
                             label='Dados Bancários'
                             fullWidth={true}
