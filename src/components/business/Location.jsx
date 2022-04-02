@@ -80,7 +80,7 @@ const Location = props => {
     const [unavailable, unavailableSet] = useState(false)
     const [updatedBy, updatedBySet] = useState('')
     const [history, historySet] = useState([]);
-    const [bankInfo, bankInfoSet] = useState([]);
+    const [bankInfo, bankInfoSet] = useState('');
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -228,6 +228,7 @@ const Location = props => {
     }
 
     const convertToBase64 = (file) => {
+        console.log({file})
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
             fileReader.readAsDataURL(file);
@@ -241,6 +242,7 @@ const Location = props => {
     }
 
     const resizeAndSet = async (e) => {
+        console.log({editMode})
         if (editMode) {
             let file = e.target.files[0];
             const base64 = await convertToBase64(file);
@@ -250,6 +252,7 @@ const Location = props => {
             }
             photoSet(base64);
         }
+        return null
     };
 
     const containPhoto = (photo) => {
@@ -346,6 +349,7 @@ const Location = props => {
                                             id="button-file"
                                             onChange={resizeAndSet}
                                             type="file"
+                                            disabled={!editMode}
                                         />
                                         <Button sx={{ mt: 1 }} variant='contained' startIcon={<FcPhotoReel />} component="span" disabled={!editMode}>
                                             {/* onClick={reziseAndSet}> */}
