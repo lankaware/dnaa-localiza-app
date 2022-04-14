@@ -41,6 +41,8 @@ const MktEvent = props => {
     const [state, stateSet] = useState('')
     const [zip, zipSet] = useState('')
     const [redeveloperId, redeveloperIdSet] = useState('')
+    const [redeveloperName, redeveloperNameSet] = useState('')
+    const [redeveloperFee, redeveloperFeeSet] = useState('')
 
     const [email, emailSet] = useState('')
     const [phone, phoneSet] = useState('')
@@ -94,8 +96,11 @@ const MktEvent = props => {
                             if (!id) return null
                             getList('redeveloperid/' + id)
                                 .then(items => {
+
+                                    redeveloperNameSet(items.record.name || '')
                                     emailSet(items.record.email || '')
                                     phoneSet(items.record.phone || '')
+                                    redeveloperFeeSet(items.record.fee || 15)
                                 })
                         })
                 })
@@ -450,6 +455,9 @@ const MktEvent = props => {
                             profileTo={profileTo}
                             zip={zip}
                             reprojectId={reprojectId}
+                            reprojectName={reprojectName}
+                            redeveloperFee={redeveloperFee}
+                            redeveloperName={redeveloperName}
                         />
                     </TabPanel>
                 </div>

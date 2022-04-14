@@ -169,3 +169,17 @@
 .only-buttons a:hover {
     color: #ffffff;
 }
+
+.layout-header {
+    background-color:#df983b;
+}
+
+.first-header {
+    border-radius: 10px 0 0 10px;
+    padding-left: 5px;
+}
+
+#last-header {
+    border-radius: 0px 10px 10px 0px;
+}
+

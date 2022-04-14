@@ -99,7 +99,7 @@ const EventLocationList = props => {
             width: '7vw',
             right: true,
             cell: row => {
-                return (row.distance) === 0 ? row.distance : <Button color='primary' size='large' id='searchButton' startIcon={<SocialDistanceIcon />}
+                return row.distance ? row.distance : <Button color='primary' size='large' id='searchButton' startIcon={<SocialDistanceIcon />}
                     onClick={_ => { console.log(row); calcDistance(row.localDest, row.index) }}>
                 </Button>
             }
@@ -156,6 +156,8 @@ const EventLocationList = props => {
     const [neighborFilter, neighborFilterSet] = useState("")
 
     const [proposalPreview, proposalPreviewSet] = useState(false)
+    const [proposalValues, proposalValuesSet] = useState(false)
+    const [proposalDisp, proposalDispSet] = useState(false)
     const proposalRef = useRef()
 
     useEffect(() => {
@@ -229,8 +231,6 @@ const EventLocationList = props => {
         recObj = JSON.stringify(recObj)
         putRec('location/', recObj)
             .then(items => {
-                let x = items.record
-                console.log({ x })
                 items.record.map((item, index) => {
                     // verficar se local já existe em eventLocation 
                     const alreadySelected = list.findIndex((listItem) => {
@@ -249,7 +249,7 @@ const EventLocationList = props => {
                         zip: item.zip,
                         profile: item.profile,
                         localDest: `${item.fulladdress} ${item.city} ${item.state}`,
-                        // distance: result.distance,
+                        distance: null,
                         locationId: item._id,
                         disponibility: item.disponibility,
                     }
@@ -260,6 +260,7 @@ const EventLocationList = props => {
                 })
             })
     }
+
 
     const localSelectOpen = () => {
         loadLocalSelect();
@@ -309,11 +310,13 @@ const EventLocationList = props => {
             .then(result => {
                 return result.distance;
             })
-            locationSelectList.map(e => {
-                if(e.index == index) {
-                    e.distance = 1 // localDistance;
-                }
-            })
+        locationSelectList.map(e => {
+            if (e.index == index) {
+                e.distance = 1 // localDistance;
+            }
+        })
+        // let locationSelectListTemp = [...locationSelectList]
+        locationSelectListSet([...locationSelectList])
     }
 
     const localSelectConfirm = () => {
@@ -521,7 +524,7 @@ const EventLocationList = props => {
                             {/* <Button color='primary' size='large' id='searchButton' startIcon={<SocialDistanceIcon />}
                                 onClick={_ => calcDistance()} disabled={!recalcEnabled}>
                             </Button> */}
-                            <Grid item xs={2}></Grid>
+                            <Grid item xs={5}></Grid>
                             <Grid item xs={3}>
                                 <FormControlLabel
                                     label="Aprovado?"
@@ -669,8 +672,15 @@ const EventLocationList = props => {
             >
                 <DialogTitle id="alert-dialog-title">{"Proposta Comercial"}</DialogTitle>
                 <DialogContent dividers>
-                    <ProposalLayout
+                    {/* <FormControlLabel control={<Checkbox checked={proposalValues} onClick={() => proposalValues ? proposalValuesSet(false) : proposalValuesSet(true)} label="Valores" />} />
+                    <FormControlLabel control={<Checkbox checked={proposalDisp} onClick={() => proposalDisp ? proposalDispSet(false) : proposalDispSet(true)} label="Disponibilidade" />} /> */} 
+                    <ProposalLayout 
                         ref={proposalRef}
+                        list={list}
+                        reprojectName={props.reprojectName}
+                        redeveloperName={props.redeveloperName}
+                        eventAddress={props.eventAddress}
+                        redeveloperFee={props.redeveloperFee}
                     />
                 </DialogContent>
                 <div className='data-bottom-margin'></div>
