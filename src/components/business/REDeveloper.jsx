@@ -68,7 +68,7 @@ const REDeveloper = props => {
     const [_id, _idSet] = useState(id)
     const [name, nameSet] = useState('')
     const [email, emailSet] = useState('')
-    const [fee, feeSet] = useState('')
+    const [fee, feeSet] = useState((id === '0' ? 15 : ''))
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -226,7 +226,7 @@ const REDeveloper = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={3}>
+                    <Grid item xs={2}>
                         <TextField
                             value={fee}
                             onChange={(event) => { feeSet(event.target.value) }}

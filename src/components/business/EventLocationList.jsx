@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import {
-    Button, Box, Grid, TextField, Dialog, MenuItem, DialogTitle, DialogContent, DialogActions, FormControlLabel, Checkbox,
+    Button, Box, Grid, TextField, Dialog, DialogTitle, DialogContent, DialogActions, FormControlLabel, Checkbox,
 } from '@mui/material'
 import ReactToPrint from "react-to-print"
 
@@ -161,6 +161,7 @@ const EventLocationList = props => {
     const [valuesProposal, valuesProposalSet] = useState(false)
     const [dispProposal, dispProposalSet] = useState(false)
     const [completeProposal, completeProposalSet] = useState(false)
+    const [confirm, confirmSet] = useState(false)
     const proposalRef = useRef()
 
     useEffect(() => {
@@ -259,7 +260,6 @@ const EventLocationList = props => {
                     locationListTemp = [...locationListTemp, line]
                     locationSelectListSet(locationListTemp)
                     // } )
-
                 })
             })
     }
@@ -388,7 +388,7 @@ const EventLocationList = props => {
 
     return (
         <div>
-            <div >
+            <div>
                 <DataTable
                     // title=""
                     noHeader={true}
@@ -427,11 +427,38 @@ const EventLocationList = props => {
                     disabled={mktEventId === '0'} onClick={() => chooseProposalSet(true)} sx={{ 'margin': '0 10px' }}>
                     GERAR PROPOSTA
                 </Button>
-                <Button color="secondary" size='small' variant='contained' startIcon={<EmailIcon />}
-                    disabled={mktEventId === '0'} onClick={() => chooseProposalSet(true)} sx={{ 'margin': '0 10px' }}>
+                <Button color="info" size='small' variant='contained' startIcon={<EmailIcon />}
+                    disabled={mktEventId === '0'} onClick={() => confirmSet(true)} sx={{ 'margin': '0 10px' }}>
                     Gerar Msg. de Confirmação
                 </Button>
             </Box>
+
+            <Dialog open={confirm} onClose={() => { confirmSet(false) }}>
+                <DialogTitle>
+                    Confirmação
+                </DialogTitle>
+                <DialogContent>
+                    {list.map((location, index) => {
+                        console.log(location)
+                        return (
+                            <>
+                                <p>{`*${location.location_name}* - *${location.location_neighborhood}*`}<br/>
+                                {`Data da ação:  ${location.occupied}`}<br/>
+                                {`Endereço: ${location.location_address_type} ${location.location_address}`}<br/>
+                                {`Horário: ${location.operatingHours}`}<br/>
+                                {`Corretores: `}</p>
+                            </>
+                        )
+                    })
+                    }
+                    <DialogActions>
+                        {/* <Button color="secondary" size='small' variant='contained' startIcon={<EmailIcon />}
+                            disabled={mktEventId === '0'} onClick={() => confirmSet(true)} sx={{ 'margin': '0 10px' }}>
+                            Copiar
+                        </Button> */}
+                    </DialogActions>
+                </DialogContent>
+            </Dialog>
 
             <Dialog open={localSelectDialog} >
                 <DialogTitle id="alert-dialog-title">{"Locais Próximos"}</DialogTitle>

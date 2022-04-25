@@ -228,7 +228,7 @@ const REProject = props => {
             </div>
             <div className='data-form'>
                 <Grid container spacing={2} >
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                         <TextField
                             id='redeveloperId'
                             label='Incorporadora'
@@ -245,7 +245,7 @@ const REProject = props => {
                             ))}
                         </TextField>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={4}>
                         <TextField
                             value={name}
                             onChange={(event) => { nameSet(event.target.value) }}
@@ -258,7 +258,7 @@ const REProject = props => {
                             size='small'
                         />
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={4}>
                         <TextField
                             value={tradeName}
                             onChange={(event) => { tradeNameSet(event.target.value) }}
@@ -379,7 +379,7 @@ const REProject = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={3}>
                         <TextField
                             value={phone}
                             onChange={(event) => { phoneSet(event.target.value) }}
