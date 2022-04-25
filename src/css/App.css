@@ -39,7 +39,8 @@
     background-color: white;
     padding: 15px;
     border: rgb(172, 164, 164);
-    border-style: none; /*solid;*/
+    border-style: none;
+    /*solid;*/
     border-width: 1px;
     width: 90vw;
     margin-left: 5vw;
@@ -49,7 +50,8 @@
     background-color: white;
     padding: 5px;
     border: rgb(172, 164, 164);
-    border-style: none; /*solid;*/
+    border-style: none;
+    /*solid;*/
     border-width: 1px;
     width: 90vw;
     margin-left: 5vw;
@@ -59,14 +61,16 @@
     background-color: white;
     padding: 5px;
     /* border: rgb(172, 164, 164); */
-    border-style: none; /*solid;*/
+    border-style: none;
+    /*solid;*/
     /* border-width: 1px; */
     width: 85vw;
 }
 
 .data-table {
     border: rgb(172, 164, 164);
-    border-style: none; /*solid;*/
+    border-style: none;
+    /*solid;*/
     border-width: 1px;
     width: 85vw;
     margin-top: 5px;
@@ -75,7 +79,8 @@
 
 .data-table-level1 {
     border: rgb(172, 164, 164);
-    border-style: none; /*solid;*/
+    border-style: none;
+    /*solid;*/
     border-width: 1px;
     width: 75vw;
     margin-top: 5px;
@@ -114,7 +119,8 @@
     /* verified */
     display: flex;
     border: #a0a0a0;
-    border-style: none; /*solid;*/
+    border-style: none;
+    /*solid;*/
     border-width: 1px;
     width: 85vw;
     min-height: 60px;
@@ -171,7 +177,7 @@
 }
 
 .layout-header {
-    background-color:#df983b;
+    background-color: #df983b;
 }
 
 .first-header {
@@ -181,5 +187,32 @@
 
 #last-header {
     border-radius: 0px 10px 10px 0px;
+    padding-right: 5px;
+
 }
 
+/* .layout-item {
+    border: solid;
+    border-width: 1px 0;
+} */
+
+.layout-item:nth-child(even) {background-color: #f2f2f2;}
+
+.layout-item:first-child, .layout-item:nth-child(2) {
+    border-top: none;
+}
+
+.layout-item:last-child {
+    border-bottom: none;
+}
+
+.layout-item td {
+    border-right: solid;
+    /* border-left: solid; */
+    border-width: 1px 1px;
+}
+
+.layout-item td:last-child {
+    border-right: none;
+    /* border-left: solid; */
+}

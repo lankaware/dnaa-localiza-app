@@ -6,7 +6,6 @@ import {
 } from '@mui/material'
 import ReactToPrint from "react-to-print"
 
-import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt'
 import SocialDistanceIcon from '@mui/icons-material/SocialDistance'
 import EmailIcon from '@mui/icons-material/Email'
@@ -19,7 +18,9 @@ import { defaultDateBr, prettyDate } from '../../services/dateutils'
 import { Context } from '../../context/AuthContext'
 
 
-import ProposalLayout from './ProposalLayout'
+import CompleteProposalLayout from './CompleteProposalLayout'
+import ValuesProposalLayout from './ValuesProposalLayout'
+import DispProposalLayout from './DispProposalLayout'
 
 const objectRef = 'eventlocation/'
 const objectId = 'eventlocationid/'
@@ -81,7 +82,7 @@ const EventLocationList = props => {
             selector: row => row.selected,
             width: '10vw',
             'data-tag': "allowRowEvents",
-            cell: row => { return <Checkbox checked={row.selected} onChange={(event) => { selectedSet(event.target.checked) }} /> }
+            cell: row => { return <Checkbox checked={row.selected} disabled={true} onChange={(event) => { selectedSet(event.target.checked) }} /> }
         },
     ];
 
@@ -156,8 +157,10 @@ const EventLocationList = props => {
     const [neighborFilter, neighborFilterSet] = useState("")
 
     const [proposalPreview, proposalPreviewSet] = useState(false)
-    const [proposalValues, proposalValuesSet] = useState(false)
-    const [proposalDisp, proposalDispSet] = useState(false)
+    const [chooseProposal, chooseProposalSet] = useState(false)
+    const [valuesProposal, valuesProposalSet] = useState(false)
+    const [dispProposal, dispProposalSet] = useState(false)
+    const [completeProposal, completeProposalSet] = useState(false)
     const proposalRef = useRef()
 
     useEffect(() => {
@@ -372,8 +375,15 @@ const EventLocationList = props => {
         return null
     }
 
-    const generateProposal = (allSelected, selectedCount, selectedRows) => {
+    const generateProposal = () => {
         proposalPreviewSet(true)
+    }
+
+    const closeProposal = () => {
+        completeProposal && completeProposalSet(false);
+        valuesProposal && valuesProposalSet(false);
+        dispProposal && dispProposalSet(false);
+        proposalPreviewSet(false);
     }
 
     return (
@@ -414,8 +424,12 @@ const EventLocationList = props => {
                     BUSCAR POR PROXIMIDADE
                 </Button>
                 <Button color="secondary" size='small' variant='contained' startIcon={<EmailIcon />}
-                    disabled={mktEventId === '0'} onClick={generateProposal} sx={{ 'margin': '0 10px' }}>
+                    disabled={mktEventId === '0'} onClick={() => chooseProposalSet(true)} sx={{ 'margin': '0 10px' }}>
                     GERAR PROPOSTA
+                </Button>
+                <Button color="secondary" size='small' variant='contained' startIcon={<EmailIcon />}
+                    disabled={mktEventId === '0'} onClick={() => chooseProposalSet(true)} sx={{ 'margin': '0 10px' }}>
+                    Gerar Msg. de Confirmação
                 </Button>
             </Box>
 
@@ -665,6 +679,24 @@ const EventLocationList = props => {
                 </DialogActions>
             </Dialog>
 
+            <Dialog open={chooseProposal}>
+                <DialogTitle>Escolha versão de proposta</DialogTitle>
+                <DialogContent>
+                    <Box m={1}>
+                        <Button onClick={() => { valuesProposalSet(true); proposalPreviewSet(true); chooseProposalSet(false); }} color="primary" variant='contained' size='small'>
+                            Valores
+                        </Button></Box>
+                    <Box m={1}>
+                        <Button onClick={() => { dispProposalSet(true); proposalPreviewSet(true); chooseProposalSet(false); }} color="primary" variant='contained' size='small'>
+                            Disponibilidade
+                        </Button></Box>
+                    <Box m={1}>
+                        <Button onClick={() => { completeProposalSet(true); proposalPreviewSet(true); chooseProposalSet(false); }} color="primary" variant='contained' size='small'>
+                            Valores + Disponibilidade
+                        </Button></Box>
+                </DialogContent>
+            </Dialog>
+
             <Dialog
                 open={proposalPreview}
                 fullWidth={true}
@@ -673,15 +705,35 @@ const EventLocationList = props => {
                 <DialogTitle id="alert-dialog-title">{"Proposta Comercial"}</DialogTitle>
                 <DialogContent dividers>
                     {/* <FormControlLabel control={<Checkbox checked={proposalValues} onClick={() => proposalValues ? proposalValuesSet(false) : proposalValuesSet(true)} label="Valores" />} />
-                    <FormControlLabel control={<Checkbox checked={proposalDisp} onClick={() => proposalDisp ? proposalDispSet(false) : proposalDispSet(true)} label="Disponibilidade" />} /> */} 
-                    <ProposalLayout 
-                        ref={proposalRef}
-                        list={list}
-                        reprojectName={props.reprojectName}
-                        redeveloperName={props.redeveloperName}
-                        eventAddress={props.eventAddress}
-                        redeveloperFee={props.redeveloperFee}
-                    />
+                    <FormControlLabel control={<Checkbox checked={proposalDisp} onClick={() => proposalDisp ? proposalDispSet(false) : proposalDispSet(true)} label="Disponibilidade" />} /> */}
+                    {completeProposal &&
+                        <CompleteProposalLayout
+                            ref={proposalRef}
+                            list={list}
+                            reprojectName={props.reprojectName}
+                            redeveloperName={props.redeveloperName}
+                            eventAddress={props.eventAddress}
+                            redeveloperFee={props.redeveloperFee}
+                        />}
+                    {valuesProposal &&
+                        <ValuesProposalLayout
+                            ref={proposalRef}
+                            list={list}
+                            reprojectName={props.reprojectName}
+                            redeveloperName={props.redeveloperName}
+                            eventAddress={props.eventAddress}
+                            redeveloperFee={props.redeveloperFee}
+
+                        />}
+                    {dispProposal &&
+                        <DispProposalLayout
+                            ref={proposalRef}
+                            list={list}
+                            reprojectName={props.reprojectName}
+                            redeveloperName={props.redeveloperName}
+                            eventAddress={props.eventAddress}
+                            redeveloperFee={props.redeveloperFee}
+                        />}
                 </DialogContent>
                 <div className='data-bottom-margin'></div>
                 <div className='only-buttons'>
@@ -699,7 +751,7 @@ const EventLocationList = props => {
                     />
                     <Box m={1}>
                         <Button color='primary' variant='contained' size='small'
-                            onClick={_ => { proposalPreviewSet(false) }} disabled={false}>
+                            onClick={closeProposal} disabled={false}>
                             Fechar
                         </Button>
                     </Box>
