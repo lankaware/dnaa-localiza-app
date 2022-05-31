@@ -440,15 +440,19 @@ const EventLocationList = props => {
                 <DialogContent>
                     {list.map((location, index) => {
                         console.log(location)
-                        return (
-                            <>
-                                <p>{`*${location.location_name}* - *${location.location_neighborhood}*`}<br/>
-                                {`Data da ação:  ${location.occupied}`}<br/>
-                                {`Endereço: ${location.location_address_type} ${location.location_address}`}<br/>
-                                {`Horário: ${location.operatingHours}`}<br/>
-                                {`Corretores: `}</p>
-                            </>
-                        )
+                        if (location.selected) {
+                            return (
+                                <>
+                                    <p>{`*${location.location_name}* - *${location.location_neighborhood}*`}<br />
+                                        {`Data da ação:  ${location.occupied}`}<br />
+                                        {`Endereço: ${location.location_address_type} ${location.location_address}`}<br />
+                                        {`Horário: ${location.operatingHours}`}<br />
+                                        {`Corretores: `}</p>
+                                </>
+                            )
+                        } else {
+                            return null;
+                        }
                     })
                     }
                     <DialogActions>

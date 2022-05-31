@@ -82,7 +82,6 @@ const MktEvent = props => {
                     if (!id) return null
                     getList('reprojectid/' + id)
                         .then(items => {
-                            console.log('3')
                             reprojectNameSet(items.record[0].name || '')
                             fulladdressSet(items.record[0].fulladdress || '')
                             neighborhoodSet(items.record[0].neighborhood || '')
@@ -110,7 +109,6 @@ const MktEvent = props => {
     }, [id, recUpdated])
 
     useEffect(() => {
-        console.log('4')
         getList('reprojectid/' + reprojectId)
             .then(items => {
                 reprojectNameSet(items.record.name || '')
