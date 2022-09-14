@@ -177,7 +177,7 @@
 }
 
 .layout-header {
-    background-color: #df983b;
+    background-color: #df983b !important;
 }
 
 .first-header {
