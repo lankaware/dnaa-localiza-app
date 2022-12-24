@@ -81,6 +81,7 @@ const Location = props => {
     const [updatedBy, updatedBySet] = useState('')
     const [history, historySet] = useState([]);
     const [bankInfo, bankInfoSet] = useState('');
+    const [observation, observationSet] = useState('');
 
     const [insertMode, setInsertMode] = useState(id === '0')
     const [editMode, setEditMode] = useState(id === '0')
@@ -127,14 +128,15 @@ const Location = props => {
                     operatingHoursSet(items.record.operatingHours || '')
                     capacitySet(items.record.capacity || '')
                     // dayValueSet(items.record.dayValue || '')
-                    dayValueSet(parseFloat(items.record.dayValue).toFixed(2).toString() || '')
-                    weekendValueSet(parseFloat(items.record.weekendValue).toFixed(2).toString() || '')
-                    fifteenValueSet(parseFloat(items.record.fifteenValue).toFixed(2).toString() || '')
-                    monthValueSet(parseFloat(items.record.monthValue).toFixed(2).toString() || '')
+                    dayValueSet(items.record.dayValue ? parseFloat(items.record.dayValue).toFixed(2).toString() : '')
+                    weekendValueSet(items.record.weekendValue ? parseFloat(items.record.weekendValue).toFixed(2).toString() : '')
+                    fifteenValueSet(items.record.fifteenValue ? parseFloat(items.record.fifteenValue).toFixed(2).toString() : '')
+                    monthValueSet(items.record.monthValue ? parseFloat(items.record.monthValue).toFixed(2).toString() : '')
                     otherValuesSet(items.record.otherValues || '')
                     unavailableSet(items.record.unavailable || '')
                     updatedBySet(items.record.updatedBy || '')
                     bankInfoSet(items.record.bankInfo || '')
+                    observationSet(items.record.observation || '')
                     repeatedDialogSet(false)
                     setInsertMode(false)
                     setEditMode(false)
@@ -182,11 +184,15 @@ const Location = props => {
             unavailable,
             updatedBy,
             bankInfo,
+            observation,
         }
         if (_id !== '0') {
             recObj = JSON.stringify(recObj)
             putRec(objectId + _id, recObj)
-        } else {
+            .then(result => {
+                console.log({result})
+            })
+    } else {
             recObj = JSON.stringify(recObj)
             postRec(objectRef, recObj)
                 .then(result => {
@@ -596,7 +602,7 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={2}>
                         <TextField
                             value={operatingHours}
                             onChange={(event) => { operatingHoursSet(event.target.value) }}
@@ -670,7 +676,7 @@ const Location = props => {
                             variant='outlined'
                             size='small'
                             inputProps={{ type: 'number' }}
-                            onBlur={(event) => { dayValueSet(parseFloat(event.target.value).toFixed(2).toString()) }}
+                            onBlur={(event) => { dayValueSet(parseFloat(event.target.value || 0).toFixed(2).toString()) }}
                             InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
                         />
                     </Grid>
@@ -686,7 +692,7 @@ const Location = props => {
                             variant='outlined'
                             size='small'
                             inputProps={{ type: 'number' }}
-                            onBlur={(event) => { weekendValueSet(parseFloat(event.target.value).toFixed(2).toString()) }}
+                            onBlur={(event) => { weekendValueSet(parseFloat(event.target.value  || 0).toFixed(2).toString()) }}
                             InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
                         />
                     </Grid>
@@ -702,7 +708,7 @@ const Location = props => {
                             variant='outlined'
                             size='small'
                             inputProps={{ type: 'number' }}
-                            onBlur={(event) => { fifteenValueSet(parseFloat(event.target.value).toFixed(2).toString()) }}
+                            onBlur={(event) => { fifteenValueSet(parseFloat(event.target.value || 0).toFixed(2).toString()) }}
                             InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
                         />
                     </Grid>
@@ -718,11 +724,11 @@ const Location = props => {
                             variant='outlined'
                             size='small'
                             inputProps={{ type: 'number' }}
-                            onBlur={(event) => { monthValueSet(parseFloat(event.target.value).toFixed(2).toString()) }}
+                            onBlur={(event) => { monthValueSet(parseFloat(event.target.value || 0).toFixed(2).toString()) }}
                             InputProps={{ startAdornment: <InputAdornment position="start">R$</InputAdornment> }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={2}>
                         <TextField
                             value={otherValues}
                             onChange={(event) => { otherValuesSet(event.target.value); updatedBySet(`${dateChanged} - ${username}`) }}
@@ -736,6 +742,20 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
+                    <Grid item xs={4}>
+                        <TextField
+                            value={updatedBy}
+                            id='lastUpdated'
+                            label='Última atualização'
+                            fullWidth={true}
+                            disabled={true}
+                            InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
+                            variant='outlined'
+                            size='small'
+                        // inputProps={{ type: 'number' }}
+                        />
+                    </Grid>
+
                     <Grid item xs={6}>
                         <TextField
                             value={disponibility}
@@ -784,16 +804,19 @@ const Location = props => {
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={6}>
                         <TextField
-                            value={updatedBy}
-                            id='lastUpdated'
-                            label='Última atualização'
+                            value={observation}
+                            onChange={(event) => { observationSet(event.target.value) }}
+                            id='observation'
+                            label='Observações'
                             fullWidth={true}
-                            disabled={true}
+                            disabled={!editMode}
                             InputLabelProps={{ shrink: true, disabled: false, classes: { root: classes.labelRoot } }}
                             variant='outlined'
                             size='small'
+                            multiline
+                            rows="2"
                         // inputProps={{ type: 'number' }}
                         />
                     </Grid>
